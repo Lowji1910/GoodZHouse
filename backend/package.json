@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "goodzhouse-backend",
   "version": "1.0.0",
   "private": true,
@@ -24,3 +25,10 @@
   }
 }
 
+=======
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "mongoose": "^8.19.2"
+  }
+}
+>>>>>>> origin/main
