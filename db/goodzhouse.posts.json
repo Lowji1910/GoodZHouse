@@ -1,0 +1,46 @@
+[{
+  "_id": {
+    "$oid": "67206a111111111111111111"
+  },
+  "title": "Cách chọn sofa cho căn hộ nhỏ",
+  "slug": "chon-sofa-cho-can-ho-nho",
+  "excerpt": "Mẹo chọn sofa tiết kiệm diện tích",
+  "content": "<p>Nên chọn sofa góc chữ L...</p>",
+  "status": "published"
+},
+{
+  "_id": {
+    "$oid": "67206a222222222222222222"
+  },
+  "title": "Trang trí phòng ngủ ấm cúng",
+  "slug": "trang-tri-phong-ngu-am-cung",
+  "excerpt": "Bí quyết phối màu và đèn cho phòng ngủ",
+  "status": "published"
+},
+{
+  "_id": {
+    "$oid": "67206a333333333333333333"
+  },
+  "title": "10 mẫu bàn ăn được ưa chuộng",
+  "slug": "10-mau-ban-an-duoc-ua-chuong",
+  "excerpt": "Top bàn ăn 6 ghế gỗ tự nhiên",
+  "status": "published"
+},
+{
+  "_id": {
+    "$oid": "67206a444444444444444444"
+  },
+  "title": "Chọn đèn trang trí phù hợp phong cách",
+  "slug": "chon-den-trang-tri",
+  "excerpt": "Đèn trang trí giúp không gian sang hơn",
+  "status": "published"
+},
+{
+  "_id": {
+    "$oid": "67206a555555555555555555"
+  },
+  "title": "Mẹo bảo quản đồ gỗ nội thất",
+  "slug": "meo-bao-quan-do-go",
+  "excerpt": "Hướng dẫn giữ đồ gỗ luôn mới",
+  "status": "published"
+}]

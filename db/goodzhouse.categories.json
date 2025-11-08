@@ -1,0 +1,90 @@
+[{
+  "_id": {
+    "$oid": "67179b111111111111111111"
+  },
+  "name": "Phòng Khách",
+  "slug": "phong-khach",
+  "description": "Sofa, bàn trà, kệ tivi...",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b222222222222222222"
+  },
+  "name": "Phòng Ăn",
+  "slug": "phong-an",
+  "description": "Bàn ghế ăn, tủ chén...",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b333333333333333333"
+  },
+  "name": "Phòng Ngủ",
+  "slug": "phong-ngu",
+  "description": "Giường, tủ quần áo, tab đầu giường",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b444444444444444444"
+  },
+  "name": "Phòng Làm Việc",
+  "slug": "phong-lam-viec",
+  "description": "Bàn, ghế văn phòng, tủ hồ sơ",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b555555555555555555"
+  },
+  "name": "Trang Trí",
+  "slug": "trang-tri",
+  "description": "Đèn, thảm, tranh, cây giả",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b666666666666666666"
+  },
+  "name": "Sân Vườn",
+  "slug": "san-vuon",
+  "description": "Bàn ghế ngoài trời, chậu cây",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b777777777777777777"
+  },
+  "name": "Phòng Tắm",
+  "slug": "phong-tam",
+  "description": "Tủ lavabo, gương, kệ treo",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b888888888888888888"
+  },
+  "name": "Phòng Trẻ Em",
+  "slug": "phong-tre-em",
+  "description": "Giường tầng, bàn học, tủ đồ chơi",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b999999999999999999"
+  },
+  "name": "Đồ Gia Dụng",
+  "slug": "do-gia-dung",
+  "description": "Tủ giày, kệ giày, giá treo",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "67179b000000000000000000"
+  },
+  "name": "Sản Phẩm Mới",
+  "slug": "san-pham-moi",
+  "description": "Hàng vừa ra mắt",
+  "isActive": true
+}]

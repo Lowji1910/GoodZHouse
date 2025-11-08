@@ -1,0 +1,397 @@
+[{
+  "_id": {
+    "$oid": "68ff7686b357b1f7cb0e574e"
+  },
+  "sku": "SF-001",
+  "name": "Sofa Góc L Mini",
+  "slug": "sofa-goc-l-mini",
+  "shortDescription": "Sofa chữ L phù hợp phòng khách nhỏ",
+  "description": "Chất liệu nỉ nhập khẩu, khung gỗ sồi chắc chắn.",
+  "categoryIds": [
+    {
+      "$oid": "67179b111111111111111111"
+    }
+  ],
+  "price": 12500000,
+  "compareAtPrice": 14500000,
+  "currency": "VND",
+  "stock": 10,
+  "images": [
+    "https://static.wixstatic.com/media/940a18_3886b77e390242bf82fc79e5d9a28aaf~mv2.jpg/v1/fill/w_800,h_800,al_c,q_85,enc_auto/940a18_3886b77e390242bf82fc79e5d9a28aaf~mv2.jpg",
+    "https://tse4.mm.bing.net/th/id/OIP.0T32_jEd0AXY51ZG_SFJ6gHaHa?pid=ImgDet&w=474&h=474&rs=1&o=7&rm=3"
+  ],
+  "tags": [
+    "sofa",
+    "phòng khách"
+  ],
+  "isActive": true,
+  "rating": 4.5,
+  "reviewsCount": 3,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5751"
+  },
+  "sku": "SF-002",
+  "name": "Sofa Da Cao Cấp Verona",
+  "slug": "sofa-da-cao-cap-verona",
+  "shortDescription": "Sofa da thật nhập khẩu Ý sang trọng",
+  "description": "Chất liệu da bò thật, khung thép sơn tĩnh điện, đệm mút D40 siêu êm.",
+  "categoryIds": [
+    {
+      "$oid": "67179b111111111111111111"
+    }
+  ],
+  "price": 28500000,
+  "compareAtPrice": 31500000,
+  "currency": "VND",
+  "stock": 7,
+  "images": [
+    "https://lakshmishomestyle.in/wp-content/uploads/2022/08/EC-115_Model_Sofa_3_Seaters-1024x1024.jpg",
+    "https://lakshmishomestyle.in/wp-content/uploads/2024/01/Duca_2_seater_Sofa-750x750.jpg"
+  ],
+  "tags": [
+    "sofa",
+    "phòng khách"
+  ],
+  "isActive": true,
+  "rating": 4.8,
+  "reviewsCount": 5,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5752"
+  },
+  "sku": "TB-001",
+  "name": "Bàn Ăn Gỗ Sồi Bắc Âu",
+  "slug": "ban-an-go-soi-bac-au",
+  "shortDescription": "Bàn ăn 6 ghế phong cách Bắc Âu",
+  "description": "Gỗ sồi tự nhiên, phủ sơn PU chống ẩm, màu sáng hiện đại.",
+  "categoryIds": [
+    {
+      "$oid": "67179b222222222222222222"
+    }
+  ],
+  "price": 9800000,
+  "compareAtPrice": 11500000,
+  "currency": "VND",
+  "stock": 12,
+  "images": [
+    "https://dogolegia.vn/wp-content/uploads/2022/08/z4860284498902_c82b79eabea92f61283431d514e48c3a-771x1024.jpg",
+    "https://tse1.explicit.bing.net/th/id/OIP.2bGG26HBQ0ITwcynjehLYwHaJ4?w=810&h=1080&rs=1&pid=ImgDetMain&o=7&rm=3"
+  ],
+  "tags": [
+    "bàn ăn",
+    "phòng bếp"
+  ],
+  "isActive": true,
+  "rating": 4.4,
+  "reviewsCount": 4,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5753"
+  },
+  "sku": "CH-001",
+  "name": "Ghế Thư Giãn Velvet",
+  "slug": "ghe-thu-gian-velvet",
+  "shortDescription": "Ghế đơn thư giãn bọc vải nhung cao cấp",
+  "description": "Ghế bọc nhung nhập khẩu, khung gỗ tần bì, chân kim loại sơn tĩnh điện.",
+  "categoryIds": [
+    {
+      "$oid": "67179b111111111111111111"
+    }
+  ],
+  "price": 4200000,
+  "compareAtPrice": 4800000,
+  "currency": "VND",
+  "stock": 15,
+  "images": [
+    "https://smafurniture.com/wp-content/uploads/2024/06/ghe-thu-gian-trong-phong-ngu-89.webp",
+    "https://file.hstatic.net/1000366453/file/comfortable-modern-velvet-lounge-chair-lounge-living__4__2474814c013e4f9c80ef61cc2b948a26_grande.jpg"
+  ],
+  "tags": [
+    "ghế",
+    "phòng khách"
+  ],
+  "isActive": true,
+  "rating": 4.6,
+  "reviewsCount": 2,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5754"
+  },
+  "sku": "BD-001",
+  "name": "Giường Ngủ Queen Size Oakline",
+  "slug": "giuong-ngu-queen-size-oakline",
+  "shortDescription": "Giường ngủ gỗ sồi cao cấp kích thước 1m8x2m",
+  "description": "Thiết kế hiện đại, dễ lắp ráp, gỗ sồi Mỹ, chống mối mọt và cong vênh.",
+  "categoryIds": [
+    {
+      "$oid": "67179b333333333333333333"
+    }
+  ],
+  "price": 16500000,
+  "compareAtPrice": 18500000,
+  "currency": "VND",
+  "stock": 8,
+  "images": [
+    "https://golathanh.vn/wp-content/uploads/2021/04/giuong-queen-size-3.jpg",
+    "https://tse1.mm.bing.net/th/id/OIP.bTw7BQcP5BNwIxEQqB32kgHaGw?pid=ImgDet&w=474&h=432&rs=1&o=7&rm=3"
+  ],
+  "tags": [
+    "giường",
+    "phòng ngủ"
+  ],
+  "isActive": true,
+  "rating": 4.7,
+  "reviewsCount": 6,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5755"
+  },
+  "sku": "WD-001",
+  "name": "Tủ Quần Áo Cửa Lùa 3 Cánh",
+  "slug": "tu-quan-ao-cua-lua-3-canh",
+  "shortDescription": "Tủ gỗ MDF phủ Melamine chống trầy",
+  "description": "Tủ 3 cánh lùa tiết kiệm diện tích, có gương soi, màu vân gỗ sáng.",
+  "categoryIds": [
+    {
+      "$oid": "67179b333333333333333333"
+    }
+  ],
+  "price": 9500000,
+  "compareAtPrice": 10900000,
+  "currency": "VND",
+  "stock": 9,
+  "images": [
+    "https://tse1.mm.bing.net/th/id/OIP.HACa7Xm-Vaih2vM5H_9hqwHaHa?pid=ImgDet&w=474&h=474&rs=1&o=7&rm=3",
+    "https://image.made-in-china.com/2f0j00kUbqLJEWnrcA/Modern-Bedroom-Furniture-Hotel-Clothes-Storage-Sliding-Door-Wardrobe.jpg"
+  ],
+  "tags": [
+    "tủ quần áo",
+    "phòng ngủ"
+  ],
+  "isActive": true,
+  "rating": 4.3,
+  "reviewsCount": 3,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5756"
+  },
+  "sku": "DS-001",
+  "name": "Kệ Tivi Gỗ Walnut 2m",
+  "slug": "ke-tivi-go-walnut-2m",
+  "shortDescription": "Kệ tivi gỗ óc chó phong cách hiện đại",
+  "description": "Gỗ Walnut tự nhiên, mặt phẳng phủ bóng, có 3 ngăn kéo tiện dụng.",
+  "categoryIds": [
+    {
+      "$oid": "67179b111111111111111111"
+    }
+  ],
+  "price": 6900000,
+  "compareAtPrice": 8200000,
+  "currency": "VND",
+  "stock": 11,
+  "images": [
+    "https://noithatthienphu.net/uploads/images/Ke-tivi/TK268/Ke-tivi-phong-khach-hien-dai.jpg",
+    "https://tse1.mm.bing.net/th/id/OIP.qtt84fMxDsAUwc0PLfsKNwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+  ],
+  "tags": [
+    "kệ tivi",
+    "phòng khách"
+  ],
+  "isActive": true,
+  "rating": 4.5,
+  "reviewsCount": 4,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5757"
+  },
+  "sku": "LT-001",
+  "name": "Bàn Làm Việc Compact 1m2",
+  "slug": "ban-lam-viec-compact-1m2",
+  "shortDescription": "Bàn làm việc gỗ công nghiệp, nhỏ gọn",
+  "description": "Bàn phủ melamine chống xước, khung thép sơn tĩnh điện, có hộc tủ mini.",
+  "categoryIds": [
+    {
+      "$oid": "67179b444444444444444444"
+    }
+  ],
+  "price": 3100000,
+  "compareAtPrice": 3600000,
+  "currency": "VND",
+  "stock": 18,
+  "images": [
+    "https://noithatmon.com/wp-content/uploads/2023/04/ban-lam-viec-chan-sat-1m2-2.jpg",
+    "https://tse1.mm.bing.net/th/id/OIP.mfiYJyjgL8O0vnPuUvkdJwHaHa?pid=ImgDet&w=474&h=474&rs=1&o=7&rm=3"
+  ],
+  "tags": [
+    "bàn làm việc",
+    "phòng làm việc"
+  ],
+  "isActive": true,
+  "rating": 4.4,
+  "reviewsCount": 2,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5758"
+  },
+  "sku": "LT-002",
+  "name": "Ghế Văn Phòng Ergonomic Mesh",
+  "slug": "ghe-van-phong-ergonomic-mesh",
+  "shortDescription": "Ghế công thái học lưới thoáng khí",
+  "description": "Thiết kế ôm lưng, tay vịn điều chỉnh, bánh xe xoay 360°, hỗ trợ cột sống.",
+  "categoryIds": [
+    {
+      "$oid": "67179b444444444444444444"
+    }
+  ],
+  "price": 2700000,
+  "compareAtPrice": 3200000,
+  "currency": "VND",
+  "stock": 20,
+  "images": [
+    "https://salt.tikicdn.com/cache/750x750/ts/product/b3/80/be/7fd003a6187bf68ff50c55b63460d250.jpg",
+    "https://salt.tikicdn.com/cache/750x750/ts/product/b3/80/be/7fd003a6187bf68ff50c55b63460d250.jpg"
+  ],
+  "tags": [
+    "ghế",
+    "phòng làm việc"
+  ],
+  "isActive": true,
+  "rating": 4.6,
+  "reviewsCount": 5,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e5759"
+  },
+  "sku": "DC-001",
+  "name": "Đèn Trang Trí Trần Mây",
+  "slug": "den-trang-tri-tran-may",
+  "shortDescription": "Đèn LED hình đám mây độc đáo",
+  "description": "Ánh sáng vàng ấm, dây treo linh hoạt, thích hợp phòng khách và phòng ngủ.",
+  "categoryIds": [
+    {
+      "$oid": "67179b555555555555555555"
+    }
+  ],
+  "price": 2200000,
+  "compareAtPrice": 2650000,
+  "currency": "VND",
+  "stock": 25,
+  "images": [
+    "https://i.etsystatic.com/28903013/r/il/254439/3387840826/il_800x800.3387840826_6f3i.jpg",
+    "https://denlongxua.com/image/cache/catalog/den-long/den-may-tre/den-may-tre-29052023-1400x875.jpg"
+  ],
+  "tags": [
+    "đèn",
+    "trang trí"
+  ],
+  "isActive": true,
+  "rating": 4.2,
+  "reviewsCount": 3,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff7b8ab357b1f7cb0e575a"
+  },
+  "sku": "DE-001",
+  "name": "Thảm Lót Sàn Vintage",
+  "slug": "tham-lot-san-vintage",
+  "shortDescription": "Thảm trang trí phong cách cổ điển",
+  "description": "Chất liệu vải dệt cao cấp, chống trơn trượt, dễ giặt, kích thước 1.6x2.3m.",
+  "categoryIds": [
+    {
+      "$oid": "67179b555555555555555555"
+    }
+  ],
+  "price": 1800000,
+  "compareAtPrice": 2100000,
+  "currency": "VND",
+  "stock": 30,
+  "images": [
+    "https://4.bp.blogspot.com/-nssKQh-rYoc/W2ET_aEtA9I/AAAAAAAAGkY/3wL9qvyaIcEF5RwhYqDMi-tDDsy1p-PiwCLcBGAs/s1600/tham-lot-san-vintage-tphcm2.jpg",
+    "https://i.etsystatic.com/44377772/c/2702/2702/98/130/il/3111c3/6215071867/il_300x300.6215071867_am3v.jpg"
+  ],
+  "tags": [
+    "thảm",
+    "trang trí"
+  ],
+  "isActive": true,
+  "rating": 4.5,
+  "reviewsCount": 4,
+  "createdAt": {
+    "$date": "2025-10-22T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68ff80e3b357b1f7cb0e575c"
+  },
+  "sku": "SF-003",
+  "name": "Sofa Băng Nỉ Xanh Pastel",
+  "slug": "sofa-bang-ni-xanh-pastel",
+  "shortDescription": "Sofa băng 3 chỗ ngồi tone xanh nhẹ nhàng",
+  "description": "Thiết kế nhỏ gọn, phù hợp căn hộ hiện đại. Nỉ nhập khẩu, đệm đàn hồi cao.",
+  "categoryIds": [
+    {
+      "$oid": "67179b111111111111111111"
+    }
+  ],
+  "price": 9500000,
+  "compareAtPrice": 11500000,
+  "currency": "VND",
+  "stock": 9,
+  "images": [
+    "https://media.gettyimages.com/id/1405540651/photo/empty-corner-of-a-modern-cozy-living-room-in-a-domestic-home.jpg?s=1024x1024&w=gi&k=20&c=KEsvdrBxoPmCsodStaqEOboizL9yPDDPzYZ9dB1BoYI=",
+    "https://media.gettyimages.com/id/1405540651/photo/empty-corner-of-a-modern-cozy-living-room-in-a-domestic-home.jpg?s=1024x1024&w=gi&k=20&c=KEsvdrBxoPmCsodStaqEOboizL9yPDDPzYZ9dB1BoYI="
+  ],
+  "tags": [
+    "sofa",
+    "phòng khách",
+    "hiện đại"
+  ],
+  "isActive": true,
+  "rating": 4.5,
+  "reviewsCount": 2,
+  "createdAt": {
+    "$date": "2025-10-26T00:00:00.000Z"
+  }
+}]

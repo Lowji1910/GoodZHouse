@@ -1,0 +1,33 @@
+[{
+  "_id": {
+    "$oid": "6909e37aaf7213e1bb544ca3"
+  },
+  "userId": {
+    "$oid": "000000000000000000000000"
+  },
+  "collections": [
+    {
+      "name": "Danh sách yêu thích",
+      "isDefault": true,
+      "isPublic": false,
+      "items": [],
+      "_id": {
+        "$oid": "6909e37aaf7213e1bb544ca4"
+      },
+      "createdAt": {
+        "$date": "2025-11-04T11:28:58.969Z"
+      },
+      "updatedAt": {
+        "$date": "2025-11-04T11:28:58.969Z"
+      }
+    }
+  ],
+  "allItems": [],
+  "createdAt": {
+    "$date": "2025-11-04T11:28:58.970Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-04T11:28:58.970Z"
+  },
+  "__v": 0
+}]

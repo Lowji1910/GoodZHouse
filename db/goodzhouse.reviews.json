@@ -1,0 +1,150 @@
+[{
+  "_id": {
+    "$oid": "672040111111111111111111"
+  },
+  "productId": {
+    "$oid": "68ff7686b357b1f7cb0e574e"
+  },
+  "userId": {
+    "$oid": "67200a333333333333333333"
+  },
+  "rating": 5,
+  "title": "Rất hài lòng",
+  "content": "Sofa ngồi êm, màu giống hình.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040222222222222222222"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5751"
+  },
+  "userId": {
+    "$oid": "67200a444444444444444444"
+  },
+  "rating": 4,
+  "title": "Da mềm, đẹp",
+  "content": "Ghế sofa da thật sờ rất thích.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040333333333333333333"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5752"
+  },
+  "userId": {
+    "$oid": "67200a555555555555555555"
+  },
+  "rating": 5,
+  "title": "Bàn ăn đẹp",
+  "content": "Gỗ sồi chắc chắn, màu sang.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040444444444444444444"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5753"
+  },
+  "userId": {
+    "$oid": "67200a666666666666666666"
+  },
+  "rating": 5,
+  "title": "Ghế êm",
+  "content": "Ngồi đọc sách thoải mái.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040555555555555555555"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5754"
+  },
+  "userId": {
+    "$oid": "67200a777777777777777777"
+  },
+  "rating": 5,
+  "title": "Giường chắc chắn",
+  "content": "Rất đáng tiền, lắp dễ.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040666666666666666666"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5755"
+  },
+  "userId": {
+    "$oid": "67200a888888888888888888"
+  },
+  "rating": 4,
+  "title": "Tủ đẹp",
+  "content": "Cửa trượt nhẹ, gỗ mịn.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040777777777777777777"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5756"
+  },
+  "userId": {
+    "$oid": "67200a999999999999999999"
+  },
+  "rating": 4,
+  "title": "Kệ xịn",
+  "content": "Chất lượng ổn, giao nhanh.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040888888888888888888"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5757"
+  },
+  "userId": {
+    "$oid": "67200a000000000000000000"
+  },
+  "rating": 5,
+  "title": "Bàn đẹp",
+  "content": "Rất hợp với căn hộ nhỏ.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040999999999999999999"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5758"
+  },
+  "userId": {
+    "$oid": "67200a333333333333333333"
+  },
+  "rating": 4,
+  "title": "Ghế êm",
+  "content": "Ngồi lâu không mỏi.",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "672040000000000000000000"
+  },
+  "productId": {
+    "$oid": "68ff7b8ab357b1f7cb0e5759"
+  },
+  "userId": {
+    "$oid": "67200a444444444444444444"
+  },
+  "rating": 5,
+  "title": "Đèn đẹp",
+  "content": "Ánh sáng ấm, dễ treo.",
+  "status": "approved"
+}]

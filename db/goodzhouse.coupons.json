@@ -1,0 +1,27 @@
+[{
+  "_id": {
+    "$oid": "67205a111111111111111111"
+  },
+  "code": "NOITHAT10",
+  "type": "percentage",
+  "value": 10,
+  "status": "active"
+},
+{
+  "_id": {
+    "$oid": "67205a222222222222222222"
+  },
+  "code": "FREESHIP",
+  "type": "freeshipping",
+  "status": "active"
+},
+{
+  "_id": {
+    "$oid": "67205a333333333333333333"
+  },
+  "code": "SALE50",
+  "type": "fixed",
+  "value": 500000,
+  "minOrderValue": 3000000,
+  "status": "active"
+}]

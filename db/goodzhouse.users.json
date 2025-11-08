@@ -1,0 +1,177 @@
+[{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d59"
+  },
+  "role": "admin",
+  "email": "admin@goodzhouse.local",
+  "passwordHash": "$2a$10$Scj41uRx11XXHkgzJT2steOT95zfajuVQaIkVSioDCMm6DuEvywvW",
+  "fullName": "Site Admin",
+  "isEmailVerified": true,
+  "createdAt": {
+    "$date": "2025-01-01T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-01T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d5a"
+  },
+  "role": "customer",
+  "email": "alice@goodzhouse.local",
+  "passwordHash": "$2a$10$0c6lIu9Xj3j2eQn3xwM0nO6V6F9YgJb1Y2w9H0v3k4xNfB2xv4E.a",
+  "fullName": "Alice Nguyen",
+  "isEmailVerified": true,
+  "createdAt": {
+    "$date": "2025-01-02T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-02T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d5b"
+  },
+  "role": "customer",
+  "email": "bob@goodzhouse.local",
+  "passwordHash": "$2a$10$Gq4g3kqkXgq7Z6h0l6Q9fe0H9l7bG1pH7zXy7GqHqeyV4g2Yd1C2a",
+  "fullName": "Bob Tran",
+  "isEmailVerified": false,
+  "createdAt": {
+    "$date": "2025-01-03T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-03T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d5c"
+  },
+  "role": "customer",
+  "email": "carol@goodzhouse.local",
+  "passwordHash": "$2a$10$qj1dFQ0s2R2q9Y3nBzvZ4u6WZp8l0b3m6q7d2c1Q4k9b2nJ5k6Txe",
+  "fullName": "Carol Pham",
+  "isEmailVerified": true,
+  "createdAt": {
+    "$date": "2025-01-04T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-04T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d5d"
+  },
+  "role": "customer",
+  "email": "david@goodzhouse.local",
+  "passwordHash": "$2a$10$Qy4uW9z2L1m8Jk3pT7h5Ae9Qx3zL2vC9f4sD1aE6g7hJk2L3m4N6S",
+  "fullName": "David Le",
+  "isEmailVerified": true,
+  "createdAt": {
+    "$date": "2025-01-05T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-05T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d5e"
+  },
+  "role": "customer",
+  "email": "emma@goodzhouse.local",
+  "passwordHash": "$2a$10$zW3nB7k6L2m1Qx4vT8p9Ce1Gf2hJk3L6s8dF1aQ2w3eR4tY5u6I8O",
+  "fullName": "Emma Vo",
+  "isEmailVerified": false,
+  "createdAt": {
+    "$date": "2025-01-06T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-06T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d5f"
+  },
+  "role": "customer",
+  "email": "frank@goodzhouse.local",
+  "passwordHash": "$2a$10$kT6rE3w2Q9yU4iP7oL1hNe6Bf3mK8sD1aQ2w3eR4tY5u6I8O9pL0q",
+  "fullName": "Frank Do",
+  "isEmailVerified": true,
+  "createdAt": {
+    "$date": "2025-01-07T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-07T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d60"
+  },
+  "role": "customer",
+  "email": "grace@goodzhouse.local",
+  "passwordHash": "$2a$10$hJ5kL8mN2bV4cX7zQ1wE6rT9yU3iO5pL1aS2dF3gH6jK8lM9nB0cD",
+  "fullName": "Grace Bui",
+  "isEmailVerified": true,
+  "createdAt": {
+    "$date": "2025-01-08T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-08T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d61"
+  },
+  "role": "customer",
+  "email": "henry@goodzhouse.local",
+  "passwordHash": "$2a$10$eR4tY5u6I8O9pL0qkT6rE3w2Q9yU4iP7oL1hNe6Bf3mK8sD1aQ2w3",
+  "fullName": "Henry Phan",
+  "isEmailVerified": false,
+  "createdAt": {
+    "$date": "2025-01-09T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-09T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de08b293d93c4a9c50d62"
+  },
+  "role": "customer",
+  "email": "ivy@goodzhouse.local",
+  "passwordHash": "$2a$10$mK8sD1aQ2w3eR4tY5u6I8OkT6rE3w2Q9yU4iP7oL1hNe6Bf3nB0cD",
+  "fullName": "Ivy Ho",
+  "isEmailVerified": true,
+  "createdAt": {
+    "$date": "2025-01-10T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-10T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690de188473e6b41e1522fff"
+  },
+  "role": "customer",
+  "email": "123@gmail.com",
+  "passwordHash": "$2a$10$8NlGzpFztdOSZ1b8PAm0k.zXWkpjygL40H1QP9jedR/Od51q9lYpC",
+  "fullName": "Nguyễn Thành Lợi",
+  "isEmailVerified": false,
+  "createdAt": {
+    "$date": "2025-11-07T12:09:44.245Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-07T12:09:44.245Z"
+  },
+  "__v": 0
+}]

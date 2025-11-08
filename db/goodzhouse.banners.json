@@ -1,0 +1,48 @@
+[{
+  "_id": {
+    "$oid": "690de8e226e423caa06fa398"
+  },
+  "title": "SALE",
+  "subtitle": "SALE",
+  "imageUrl": "https://noithatzear.vn/wp-content/uploads/2023/09/banner-noi-that.jpg",
+  "linkUrl": "https://noithatzear.vn/wp-content/uploads/2023/09/banner-noi-that.jpg",
+  "isActive": true,
+  "order": 1,
+  "startsAt": {
+    "$date": "2025-11-07T12:40:00.000Z"
+  },
+  "endsAt": {
+    "$date": "2025-11-08T12:40:00.000Z"
+  },
+  "createdAt": {
+    "$date": "2025-11-07T12:41:06.902Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-07T12:41:06.902Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "690de91226e423caa06fa3c4"
+  },
+  "title": "SALE ",
+  "subtitle": "SALE",
+  "imageUrl": "https://noithatzear.vn/wp-content/uploads/2023/09/banner-noi-that.jpg",
+  "linkUrl": "https://noithatzear.vn/wp-content/uploads/2023/09/banner-noi-that.jpg",
+  "isActive": true,
+  "order": 2,
+  "startsAt": {
+    "$date": "2025-11-07T12:41:00.000Z"
+  },
+  "endsAt": {
+    "$date": "2025-11-08T12:41:00.000Z"
+  },
+  "createdAt": {
+    "$date": "2025-11-07T12:41:54.281Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-07T12:41:54.281Z"
+  },
+  "__v": 0
+}]
