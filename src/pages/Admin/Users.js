@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useToast } from '../../context/ToastContext';
 
 export default function AdminUsers() {
+  const { notify } = useToast();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,6 +26,7 @@ export default function AdminUsers() {
       setUsers(Array.isArray(data) ? data : (data.items || []));
     } catch (error) {
       setError(error.message);
+      notify('Không tải được danh sách người dùng', 'danger');
     } finally {
       setLoading(false);
     }
@@ -47,7 +50,7 @@ export default function AdminUsers() {
         createdAt: data.createdAt || ''
       });
       setShowModal(true);
-    } catch (e) { alert(e.message); }
+    } catch (e) { notify(e.message || 'Không tải được chi tiết người dùng', 'danger'); }
   };
 
   const closeModal = () => { setShowModal(false); setDetailId(null); };
@@ -88,9 +91,9 @@ export default function AdminUsers() {
           body: JSON.stringify(updates)
         }
       );
-      if (response.ok) fetchUsers();
+      if (response.ok) { fetchUsers(); notify('Đã cập nhật người dùng', 'success'); }
     } catch (error) {
-      alert('Không cập nhật được người dùng');
+      notify('Không cập nhật được người dùng', 'danger');
     }
   };
 

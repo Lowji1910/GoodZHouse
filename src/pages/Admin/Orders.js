@@ -68,7 +68,21 @@ export default function AdminOrders() {
 
   const submitFilters = (e) => { e.preventDefault(); fetchOrders(1); };
 
-  if (loading) return <div>Loading...</div>;
+  const StatusBadge = ({ value }) => {
+    const v = String(value || '').toLowerCase();
+    const map = {
+      completed: 'success', delivered: 'success',
+      cancelled: 'danger', canceled: 'danger',
+      shipping: 'info', processing: 'primary', pending: 'warning'
+    };
+    const label = {
+      completed: 'Hoàn thành', delivered: 'Hoàn thành',
+      cancelled: 'Đã hủy', canceled: 'Đã hủy',
+      shipping: 'Đang giao', processing: 'Đang xử lý', pending: 'Chờ xử lý'
+    }[v] || value;
+    const variant = map[v] || 'secondary';
+    return <span className={`badge bg-${variant}`}>{label}</span>;
+  };
 
   return (
     <div className="py-4">
@@ -93,9 +107,9 @@ export default function AdminOrders() {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="card">
-        <div className="table-responsive">
+        <div className="table-responsive" style={{ maxHeight: '70vh' }}>
           <table className="table table-hover align-middle mb-0">
-            <thead>
+            <thead className="table-light" style={{ position: 'sticky', top: 0, zIndex: 1 }}>
               <tr>
                 <th>Mã đơn</th>
                 <th>Khách hàng</th>
@@ -106,35 +120,57 @@ export default function AdminOrders() {
               </tr>
             </thead>
             <tbody>
-              {orders.map(order => (
-                <tr key={order.id}>
-                  <td>{order.code}</td>
-                  <td>{order.customerName}</td>
-                  <td>{order.total?.toLocaleString('vi-VN')}₫</td>
-                  <td>{new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
-                  <td>
-                    <select
-                      className="form-select form-select-sm w-auto"
-                      value={order.status}
-                      onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                    >
-                      <option value="pending">Chờ xử lý</option>
-                      <option value="processing">Đang xử lý</option>
-                      <option value="shipping">Đang giao</option>
-                      <option value="completed">Hoàn thành</option>
-                      <option value="cancelled">Đã hủy</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button 
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => navigate(`/admin/orders/${order.id}`)}
-                    >
-                      Chi tiết
-                    </button>
+              {loading ? (
+                [...Array(8)].map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan={6}>
+                      <div className="placeholder-glow">
+                        <span className="placeholder col-2 me-2"></span>
+                        <span className="placeholder col-2 me-2"></span>
+                        <span className="placeholder col-2 me-2"></span>
+                        <span className="placeholder col-2 me-2"></span>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : orders.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-5">
+                    <div className="text-muted">Chưa có đơn hàng nào phù hợp bộ lọc.</div>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                orders.map(order => (
+                  <tr key={order.id}>
+                    <td className="text-truncate" style={{ maxWidth: 160 }}>{order.code || order.id}</td>
+                    <td className="text-truncate" style={{ maxWidth: 220 }}>{order.customerName || order.userId}</td>
+                    <td>{order.total?.toLocaleString('vi-VN')}₫</td>
+                    <td>{order.createdAt ? new Date(order.createdAt).toLocaleDateString('vi-VN') : '-'}</td>
+                    <td className="d-flex align-items-center gap-2">
+                      <StatusBadge value={order.status} />
+                      <select
+                        className="form-select form-select-sm w-auto"
+                        value={order.status}
+                        onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                      >
+                        <option value="pending">Chờ xử lý</option>
+                        <option value="processing">Đang xử lý</option>
+                        <option value="shipping">Đang giao</option>
+                        <option value="completed">Hoàn thành</option>
+                        <option value="cancelled">Đã hủy</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button 
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => navigate(`/admin/orders/${order.id}`)}
+                      >
+                        Chi tiết
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

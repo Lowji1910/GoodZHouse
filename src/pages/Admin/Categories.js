@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useToast } from '../../context/ToastContext';
 
 const BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 export default function AdminCategories() {
+  const { notify } = useToast();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -58,7 +60,8 @@ export default function AdminCategories() {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       setShowForm(false); setEditingId(null);
       fetchCategories(page, q);
-    } catch (e1) { alert(e1.message); }
+      notify(editingId ? 'Cập nhật danh mục thành công' : 'Tạo danh mục thành công', 'success');
+    } catch (e1) { notify(e1.message || 'Lỗi khi lưu danh mục', 'danger'); }
   };
 
   const remove = async (id) => {
@@ -67,10 +70,11 @@ export default function AdminCategories() {
       const res = await fetch(`${BASE}/api/categories/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
       if (!(res.ok || res.status === 204)) throw new Error('HTTP ' + res.status);
       fetchCategories(page, q);
-    } catch (e1) { alert(e1.message); }
+      notify('Đã xóa danh mục', 'success');
+    } catch (e1) { notify(e1.message || 'Lỗi khi xóa danh mục', 'danger'); }
   };
 
-  if (loading) return <div>Loading...</div>;
+  // Do not early-return; we'll show skeletons in table instead for UX consistency
 
   return (
     <div className="py-4">
@@ -88,9 +92,9 @@ export default function AdminCategories() {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="card">
-        <div className="table-responsive">
+        <div className="table-responsive" style={{ maxHeight: '70vh' }}>
           <table className="table table-hover align-middle mb-0">
-            <thead>
+            <thead className="table-light" style={{ position: 'sticky', top: 0, zIndex: 1 }}>
               <tr>
                 <th>Tên danh mục</th>
                 <th>Slug</th>
@@ -99,21 +103,41 @@ export default function AdminCategories() {
               </tr>
             </thead>
             <tbody>
-              {categories.map(category => (
-                <tr key={category.id}>
-                  <td>{category.name}</td>
-                  <td>{category.slug}</td>
-                  <td>{category.productCount}</td>
-                  <td>
-                    <button className="btn btn-sm btn-outline-primary me-2" onClick={()=>startEdit(category)}>
-                      Sửa
-                    </button>
-                    <button className="btn btn-sm btn-outline-danger" onClick={()=>remove(category.id)}>
-                      Xóa
-                    </button>
+              {loading ? (
+                [...Array(8)].map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan={4}>
+                      <div className="placeholder-glow">
+                        <span className="placeholder col-3 me-2"></span>
+                        <span className="placeholder col-2 me-2"></span>
+                        <span className="placeholder col-1 me-2"></span>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : categories.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="text-center py-5">
+                    <div className="text-muted">Chưa có danh mục nào phù hợp.</div>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                categories.map(category => (
+                  <tr key={category.id}>
+                    <td>{category.name}</td>
+                    <td>{category.slug}</td>
+                    <td>{category.productCount}</td>
+                    <td>
+                      <button className="btn btn-sm btn-outline-primary me-2" onClick={()=>startEdit(category)}>
+                        Sửa
+                      </button>
+                      <button className="btn btn-sm btn-outline-danger" onClick={()=>remove(category.id)}>
+                        Xóa
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

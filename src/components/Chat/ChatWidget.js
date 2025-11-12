@@ -38,7 +38,18 @@ export default function ChatWidget() {
 
   return (
     <div style={{ position: 'fixed', right: 16, bottom: dockOffset ? 96 : 16, zIndex: 1050 }}>
-      <button className="btn btn-primary position-relative" data-bs-toggle="modal" data-bs-target="#chatModal" onClick={() => setUnread(0)}>
+      <button
+        className="btn btn-primary position-relative"
+        onClick={() => {
+          setUnread(0);
+          const el = document.getElementById('chatModal');
+          const bs = window.bootstrap;
+          if (el && bs) {
+            const inst = bs.Modal.getInstance(el) || new bs.Modal(el, { backdrop: true, keyboard: true });
+            inst.show();
+          }
+        }}
+      >
         Chat hỗ trợ
         {unread > 0 && (
           <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

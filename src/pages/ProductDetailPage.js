@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import ReviewList from '../components/Review/ReviewList';
 import ReviewForm from '../components/Review/ReviewForm';
 import { useWishlist } from '../context/WishlistContext';
-import * as bootstrap from 'bootstrap';
 
 const BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
@@ -228,9 +227,15 @@ export default function ProductDetailPage() {
             {user && (
               <button 
                 className="btn btn-success"
-                onClick={() => addItem({ id: product._id, name: product.name, price: product.price, image: cover }, 1)}
-                data-bs-toggle="offcanvas" 
-                data-bs-target="#offcanvasCart"
+                onClick={() => {
+                  addItem({ id: product._id, name: product.name, price: product.price, image: cover }, 1);
+                  const el = document.getElementById('offcanvasCart');
+                  const bs = window.bootstrap;
+                  if (el && bs) {
+                    const inst = bs.Offcanvas.getInstance(el) || new bs.Offcanvas(el, { backdrop: true, scroll: true });
+                    inst.show();
+                  }
+                }}
               >
                 Thêm vào giỏ hàng
               </button>
@@ -243,8 +248,14 @@ export default function ProductDetailPage() {
             </button>
             <button 
               className="btn btn-outline-primary"
-              data-bs-toggle="modal" 
-              data-bs-target="#addToWishlistModal"
+              onClick={() => {
+                const el = document.getElementById('addToWishlistModal');
+                const bs = window.bootstrap;
+                if (el && bs) {
+                  const inst = bs.Modal.getInstance(el) || new bs.Modal(el, { backdrop: true, keyboard: true });
+                  inst.show();
+                }
+              }}
             >
               Thêm vào bộ sưu tập
             </button>

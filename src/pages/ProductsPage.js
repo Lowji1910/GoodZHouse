@@ -243,9 +243,15 @@ export default function ProductsPage() {
                 <div className="fw-bold text-danger mb-2">{p.price?.toLocaleString('vi-VN')}₫</div>
                 <button 
                   className="btn btn-sm btn-primary mt-auto" 
-                  onClick={() => addItem(p, 1)} 
-                  data-bs-toggle="offcanvas" 
-                  data-bs-target="#offcanvasCart"
+                  onClick={() => {
+                    addItem(p, 1);
+                    const el = document.getElementById('offcanvasCart');
+                    const bs = window.bootstrap;
+                    if (el && bs) {
+                      const inst = bs.Offcanvas.getInstance(el) || new bs.Offcanvas(el, { backdrop: true, scroll: true });
+                      inst.show();
+                    }
+                  }}
                 >
                   Thêm vào giỏ
                 </button>

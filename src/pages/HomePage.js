@@ -16,7 +16,11 @@ function ProductRow({ title, query }) {
     const load = async () => {
       try {
         setLoading(true); setError('');
-        const res = await fetch(`${BASE}/api/products?${query}`, { signal: controller.signal });
+        const res = await fetch(`${BASE}/api/products?${query}&_=${Date.now()}`, {
+          signal: controller.signal,
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         if (!controller.signal.aborted) setItems(data.items || []);
@@ -90,10 +94,16 @@ export default function HomePage() {
     const load = async () => {
       try {
         setLoading(true); setError('');
-        const res = await fetch(`${BASE}/api/banners`, { signal: controller.signal });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (!controller.signal.aborted) setBanners(data || []);
+        const res = await fetch(`${BASE}/api/banners?_=${Date.now()}`, {
+          signal: controller.signal,
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        if (!(res.ok || res.status === 304)) throw new Error('HTTP ' + res.status);
+        if (res.status !== 304) {
+          const data = await res.json();
+          if (!controller.signal.aborted) setBanners(data || []);
+        }
       } catch (e) {
         if (e.name !== 'AbortError') setError(e.message);
       } finally {

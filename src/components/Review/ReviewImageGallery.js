@@ -16,8 +16,6 @@ export default function ReviewImageGallery({ images }) {
                 objectFit: 'cover',
                 cursor: 'pointer'
               }}
-              data-bs-toggle="modal"
-              data-bs-target="#reviewImageModal"
               onClick={() => {
                 // TODO: Open image in modal/lightbox
               }}

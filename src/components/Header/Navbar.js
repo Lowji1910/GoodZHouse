@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import * as bootstrap from 'bootstrap';
 import NotificationBell from '../Notifications/NotificationBell';
 
 export default function Navbar() {
@@ -77,8 +76,13 @@ export default function Navbar() {
                       onClick={(e) => {
                         // Đóng dropdown khi click
                         const dropdownEl = e.target.closest('.dropdown');
-                        const dropdown = bootstrap.Dropdown.getInstance(dropdownEl.querySelector('.dropdown-toggle'));
-                        if (dropdown) dropdown.hide();
+                        const bs = window.bootstrap;
+                        if (bs && dropdownEl) {
+                          const instance = bs.Dropdown.getInstance(
+                            dropdownEl.querySelector('.dropdown-toggle')
+                          );
+                          if (instance) instance.hide();
+                        }
                       }}
                     >
                       {c.name}
@@ -97,9 +101,15 @@ export default function Navbar() {
             {user && (
               <li className="nav-item me-2">
                 <button 
-                  className="btn btn-outline-primary position-relative" 
-                  data-bs-toggle="offcanvas" 
-                  data-bs-target="#offcanvasCart"
+                  className="btn btn-outline-primary position-relative"
+                  onClick={() => {
+                    const el = document.getElementById('offcanvasCart');
+                    const bs = window.bootstrap;
+                    if (el && bs) {
+                      const inst = bs.Offcanvas.getInstance(el) || new bs.Offcanvas(el, { backdrop: true, scroll: true });
+                      inst.show();
+                    }
+                  }}
                 >
                   Giỏ hàng
                   <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -117,7 +127,17 @@ export default function Navbar() {
 
             {user && (
               <li className="nav-item me-2">
-                <button className="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#chatModal">
+                <button
+                  className="btn btn-outline-success"
+                  onClick={() => {
+                    const el = document.getElementById('chatModal');
+                    const bs = window.bootstrap;
+                    if (el && bs) {
+                      const inst = bs.Modal.getInstance(el) || new bs.Modal(el, { backdrop: true, keyboard: true });
+                      inst.show();
+                    }
+                  }}
+                >
                   Chat
                 </button>
               </li>

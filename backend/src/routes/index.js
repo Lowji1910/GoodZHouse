@@ -117,14 +117,37 @@ router.get('/banners', async (req, res, next) => {
     const filter = {
       isActive: true,
       $and: [
-        { $or: [{ startsAt: null }, { startsAt: { $lte: now } }] },
-        { $or: [{ endsAt: null }, { endsAt: { $gte: now } }] }
+        {
+          $or: [
+            { startsAt: null },
+            { startsAt: '' },
+            { startsAt: { $exists: false } },
+            { startsAt: { $lte: now } }
+          ]
+        },
+        {
+          $or: [
+            { endsAt: null },
+            { endsAt: '' },
+            { endsAt: { $exists: false } },
+            { endsAt: { $gte: now } }
+          ]
+        }
       ]
     };
-    const docs = await Banner.find(filter)
+    let docs = await Banner.find(filter)
       .sort({ order: 1, createdAt: -1 })
       .select('title subtitle imageUrl linkUrl')
       .lean();
+    if (!docs || docs.length === 0) {
+      // Fallback: show latest banners even if time window not set properly
+      docs = await Banner.find({ isActive: { $ne: false } })
+        .sort({ order: 1, createdAt: -1 })
+        .limit(5)
+        .select('title subtitle imageUrl linkUrl')
+        .lean();
+    }
+    res.set('Cache-Control', 'no-store, max-age=0');
     res.json(docs.map(b => ({ id: b._id, title: b.title, subtitle: b.subtitle, imageUrl: b.imageUrl, linkUrl: b.linkUrl })));
   } catch (err) {
     next(err);

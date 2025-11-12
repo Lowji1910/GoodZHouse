@@ -1,31 +1,27 @@
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
+import React from 'react';
+import './App.css';
+import AppRouter from './router';
+import Navbar from './components/Header/Navbar';
+import Footer from './components/Footer/Footer';
+import { BrowserRouter } from 'react-router-dom';
+import MiniCart from './components/Cart/MiniCart';
+import ChatModal from './components/Chat/ChatModal';
+import { ToastProvider } from './context/ToastContext';
 
-const app = express();
+function App() {
+  return (
+    <BrowserRouter>
+      <ToastProvider>
+        <Navbar />
+        <MiniCart />
+        <ChatModal />
+        <div className="App">
+          <AppRouter />
+        </div>
+        <Footer />
+      </ToastProvider>
+    </BrowserRouter>
+  );
+}
 
-app.use(cors());
-app.use(express.json());
-app.use(morgan('dev'));
-
-app.get('/health', (req, res) => {
-  res.json({ ok: true });
-});
-
-// API routes
-const apiRouter = require('./routes');
-const wishlistRouter = require('./routes/wishlist');
-const authRouter = require('./routes/auth');
-const adminRouter = require('./routes/admin');
-app.use('/api', apiRouter);
-app.use('/api/wishlist', wishlistRouter);
-app.use('/api/auth', authRouter);
-app.use('/api/admin', adminRouter);
-
-// Optional: root message to avoid "Cannot GET /"
-app.get('/', (req, res) => {
-  res.send('Backend OK. Visit /api/health or /api/products');
-});
-
-module.exports = app;
-
+export default App;

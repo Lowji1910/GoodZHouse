@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 export default function AdminOrderDetail() {
-  const { orderId } = useParams();
+  const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -11,7 +11,7 @@ export default function AdminOrderDetail() {
   const load = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${base}/api/orders/${orderId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      const res = await fetch(`${base}/api/orders/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       setOrder(data);
@@ -22,17 +22,17 @@ export default function AdminOrderDetail() {
     }
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [orderId]);
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [id]);
 
   const statusLabel = useMemo(() => {
     const m = { pending: 'Chờ xử lý', processing: 'Đang xử lý', shipping: 'Đang giao', delivered: 'Hoàn thành', completed: 'Hoàn thành', canceled: 'Đã hủy', cancelled: 'Đã hủy' };
-    return m[String(order?.status)] || order?.status;
+    return m.String ? m.String(order?.status) : (m[String(order?.status)] || order?.status);
   }, [order?.status]);
 
   const updateStatus = async (status) => {
     try {
       setUpdating(true);
-      const res = await fetch(`${base}/api/orders/${orderId}/status`, {
+      const res = await fetch(`${base}/api/orders/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -49,13 +49,26 @@ export default function AdminOrderDetail() {
     }
   };
 
+  const steps = useMemo(() => {
+    const current = String(order?.status || '').toLowerCase();
+    const orderIdx = ['pending','processing','shipping','completed','cancelled'];
+    const idx = Math.max(0, orderIdx.indexOf(current));
+    const items = [
+      { key: 'pending', label: 'Chờ xử lý' },
+      { key: 'processing', label: 'Đang xử lý' },
+      { key: 'shipping', label: 'Đang giao' },
+      { key: 'completed', label: 'Hoàn thành' }
+    ];
+    return items.map((s, i) => ({ ...s, done: current === 'cancelled' ? false : i <= idx, active: i === idx }));
+  }, [order?.status]);
+
   if (loading) return <div className="py-4">Đang tải...</div>;
   if (!order) return <div className="py-4">Không tìm thấy đơn hàng</div>;
 
   return (
     <div className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h3 className="mb-0">Đơn hàng {order.id}</h3>
+        <h3 className="mb-0">Đơn hàng {order.id || id}</h3>
         <div className="d-flex align-items-center gap-2">
           <span className="me-2">Trạng thái:</span>
           <select className="form-select" style={{ maxWidth: 220 }} value={order.status}
@@ -66,6 +79,27 @@ export default function AdminOrderDetail() {
             <option value="completed">Hoàn thành</option>
             <option value="cancelled">Đã hủy</option>
           </select>
+        </div>
+      </div>
+
+      <div className="card mb-3">
+        <div className="card-body">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            {steps.map((s, i) => (
+              <div key={s.key} className="d-flex align-items-center flex-fill" style={{ minWidth: 120 }}>
+                <div className={`rounded-circle d-inline-flex align-items-center justify-content-center me-2 ${s.done ? 'bg-success text-white' : 'bg-light border'}`} style={{ width: 28, height: 28 }}>
+                  {i+1}
+                </div>
+                <div className={s.active ? 'fw-semibold' : ''}>{s.label}</div>
+                {i < steps.length - 1 && (
+                  <div className={`flex-grow-1 mx-3 ${s.done ? 'bg-success' : 'bg-light'}`} style={{ height: 2 }} />
+                )}
+              </div>
+            ))}
+            {String(order.status).toLowerCase() === 'cancelled' && (
+              <span className="badge bg-danger">Đã hủy</span>
+            )}
+          </div>
         </div>
       </div>
 
