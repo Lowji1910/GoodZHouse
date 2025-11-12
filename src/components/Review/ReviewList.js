@@ -156,9 +156,13 @@ export default function ReviewList({ productId }) {
       const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
       const response = await fetch(`${baseUrl}/api/reviews/${reviewId}/react`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(localStorage.getItem('token') ? { 'Authorization': `Bearer ${localStorage.getItem('token')}` } : {})
+        },
         body: JSON.stringify({ reaction })
       });
+
       if (!response.ok) throw new Error('HTTP ' + response.status);
       const data = await response.json();
       
@@ -182,7 +186,10 @@ export default function ReviewList({ productId }) {
       const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
       const response = await fetch(`${baseUrl}/api/reviews/${reviewId}/reply`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(localStorage.getItem('token') ? { 'Authorization': `Bearer ${localStorage.getItem('token')}` } : {})
+        },
         body: JSON.stringify({ content: replyContent })
       });
       

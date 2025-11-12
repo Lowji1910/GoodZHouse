@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import NotificationBell from '../Notifications/NotificationBell';
 
 export default function Navbar() {
   const [categories, setCategories] = useState([]);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     let isMounted = true;
@@ -20,7 +22,6 @@ export default function Navbar() {
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
         if (isMounted) {
-          console.log('Categories:', data); // Để kiểm tra dữ liệu
           setCategories(data);
         }
       } catch (error) {
@@ -38,6 +39,21 @@ export default function Navbar() {
     };
   }, []);
 
+  // Transparent on Home + change on scroll
+  useEffect(() => {
+    const isHome = location.pathname === '/';
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    if (isHome) {
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    } else {
+      setScrolled(true);
+    }
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [location.pathname]);
+
   const { count } = useCart();
   const { user, logout, isAdmin } = useAuth();
 
@@ -48,7 +64,7 @@ export default function Navbar() {
         Tài khoản của bạn đã bị khóa. Một số chức năng sẽ bị hạn chế.
       </div>
     )}
-    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+    <nav className={`navbar navbar-expand-lg sticky-top navbar-scrolled`}>
       <div className="container">
         <Link className="navbar-brand" to="/">GoodzHouse</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
@@ -67,12 +83,12 @@ export default function Navbar() {
               >
                 Danh mục
               </a>
-              <ul className="dropdown-menu">
+              <ul className="dropdown-menu mega-grid p-2">
                 {categories.map((c) => (
                   <li key={c.id || c._id}>
                     <Link 
-                      className="dropdown-item" 
-                      to={`/products?category=${c.name}&page=1`}
+                      className="dropdown-item d-flex align-items-center gap-2" 
+                      to={`/products?category=${encodeURIComponent(c.slug || c.name)}&page=1`}
                       onClick={(e) => {
                         // Đóng dropdown khi click
                         const dropdownEl = e.target.closest('.dropdown');
@@ -85,7 +101,8 @@ export default function Navbar() {
                         }
                       }}
                     >
-                      {c.name}
+                      <span className="text-muted" aria-hidden>●</span>
+                      <span>{c.name}</span>
                     </Link>
                   </li>
                 ))}

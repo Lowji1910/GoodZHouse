@@ -116,6 +116,18 @@ router.get('/products/:id', async (req, res, next) => {
   }
 });
 
+// Get product by slug
+router.get('/products/slug/:slug', async (req, res, next) => {
+  try {
+    const Product = require('../models/Product');
+    const doc = await Product.findOne({ slug: req.params.slug }).lean();
+    if (!doc) return res.status(404).json({ message: 'Not found' });
+    res.json(doc);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Categories
 router.get('/categories', async (req, res, next) => {
   try {
@@ -359,6 +371,82 @@ router.get('/orders', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// Current user's cart
+router.get('/cart', requireAuth, async (req, res, next) => {
+  try {
+    const Cart = require('../models/Cart');
+    const cart = await Cart.findOne({ userId: req.user.id }).lean();
+    if (!cart) return res.json({ items: [] });
+    res.json({ items: cart.items });
+  } catch (err) { next(err); }
+});
+
+// Replace current user's cart
+router.put('/cart', requireAuth, async (req, res, next) => {
+  try {
+    const Cart = require('../models/Cart');
+    const items = Array.isArray(req.body?.items) ? req.body.items : [];
+    const normalized = items
+      .filter(it => it && (it.productId || it.id))
+      .map(it => ({
+        productId: it.productId || it.id,
+        quantity: Math.max(1, Number(it.quantity) || 1),
+        priceAtAdd: it.priceAtAdd ?? it.price ?? 0,
+      }));
+    const doc = await Cart.findOneAndUpdate(
+      { userId: req.user.id },
+      { $set: { items: normalized } },
+      { new: true, upsert: true }
+    ).lean();
+    res.json({ items: doc.items });
+  } catch (err) { next(err); }
+});
+
+// Create order
+router.post('/orders', requireAuth, async (req, res, next) => {
+  try {
+    const Order = require('../models/Order');
+    const Product = require('../models/Product');
+    const { items = [], paymentMethod = 'cod', shipping = {}, couponCode } = req.body || {};
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'No items' });
+    }
+
+    // Recalculate total from DB prices for safety
+    const ids = items.map(it => it.productId || it.id);
+    const prods = await Product.find({ _id: { $in: ids } }).select('price').lean();
+    const priceMap = new Map(prods.map(p => [p._id.toString(), p.price]));
+    const orderItems = items.map(it => ({
+      productId: it.productId || it.id,
+      quantity: Math.max(1, Number(it.quantity)||1),
+      price: priceMap.get((it.productId || it.id).toString()) ?? (Number(it.price) || 0),
+    }));
+    let total = orderItems.reduce((s, it) => s + (it.price||0) * it.quantity, 0);
+
+    // TODO: apply coupon validation in coupons route; here assume validated externally
+    if (couponCode && req.query?.skipCoupon !== '1') {
+      // keep simple, do not change total here
+    }
+
+    const order = await Order.create({ userId: req.user.id, items: orderItems, total, status: 'pending' });
+    res.status(201).json({ id: order._id.toString(), total: order.total, status: order.status });
+  } catch (err) { next(err); }
+});
+
+// Get order by id (only owner or admin)
+router.get('/orders/:id', requireAuth, async (req, res, next) => {
+  try {
+    const Order = require('../models/Order');
+    const order = await Order.findById(req.params.id).lean();
+    if (!order) return res.status(404).json({ message: 'Not found' });
+    if (order.userId?.toString?.() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    res.json({ id: order._id, userId: order.userId, items: order.items, total: order.total, status: order.status, createdAt: order.createdAt });
+  } catch (err) { next(err); }
 });
 
 module.exports = router;

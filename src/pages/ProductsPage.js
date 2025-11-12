@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import ProductSkeleton from '../components/Shared/ProductSkeleton';
@@ -14,6 +16,7 @@ export default function ProductsPage() {
   const { addItem } = useCart();
 
   const observer = useRef();
+  const gridRef = useRef(null);
   const abortControllerRef = useRef();
   const loadingRef = useRef(false);
   const lastProductRef = useCallback(node => {
@@ -38,6 +41,32 @@ export default function ProductsPage() {
       }
     };
   }, [loading, hasMore]);
+
+  // Register GSAP and attach scroll reveal for product cards
+  useEffect(() => {
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray('.product-card');
+      cards.forEach((el) => {
+        if (el.getAttribute('data-animated')) return;
+        gsap.from(el, {
+          autoAlpha: 0,
+          y: 20,
+          duration: 0.6,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 90%',
+            toggleActions: 'play none none none'
+          },
+          onComplete: () => el.setAttribute('data-animated', 'true')
+        });
+      });
+    }, gridRef);
+    return () => ctx.revert();
+  }, [products]);
 
   const buildQuery = useCallback((currentPage) => {
     const searchParams = new URLSearchParams();
@@ -211,62 +240,91 @@ export default function ProductsPage() {
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="row g-3">
-        {products.map((p, index) => (
-          <div 
-            className="col-6 col-md-3" 
-            key={p.id}
-            ref={index === products.length - 1 ? lastProductRef : null}
-          >
-            <div className="card h-100 shadow-sm">
-              <Link to={`/products/${p.slug || p.id}`} className="text-decoration-none text-dark">
-                <div className="ratio ratio-4x3 bg-light rounded-top">
-                  {p.image && (
-                    <img src={p.image} alt={p.name} className="w-100 h-100" style={{ objectFit: 'cover' }} />
-                  )}
-                </div>
-              </Link>
-              <div className="card-body d-flex flex-column">
-                <Link to={`/products/${p.slug || p.id}`} className="text-decoration-none text-dark">
-                  <h6 className="card-title" style={{ minHeight: 40 }}>{p.name}</h6>
-                </Link>
-                {p.rating > 0 && (
-                  <div className="d-flex align-items-center gap-1 mb-2">
-                    <span className="badge bg-warning text-dark">
-                      {p.rating?.toFixed(1)} ⭐
-                    </span>
-                    <small className="text-muted">
-                      ({p.reviewsCount})
-                    </small>
+      {/* Loading skeletons */}
+      {loading && products.length === 0 && (
+        <div className="row g-3">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div className="col-6 col-md-3" key={i}>
+              <div className="card h-100 shadow-sm">
+                <div className="bg-light rounded-top" style={{ aspectRatio: '4 / 5' }} />
+                <div className="card-body">
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-8" />
                   </div>
-                )}
-                <div className="fw-bold text-danger mb-2">{p.price?.toLocaleString('vi-VN')}₫</div>
-                <button 
-                  className="btn btn-sm btn-primary mt-auto" 
-                  onClick={() => {
-                    addItem(p, 1);
-                    const el = document.getElementById('offcanvasCart');
-                    const bs = window.bootstrap;
-                    if (el && bs) {
-                      const inst = bs.Offcanvas.getInstance(el) || new bs.Offcanvas(el, { backdrop: true, scroll: true });
-                      inst.show();
-                    }
-                  }}
-                >
-                  Thêm vào giỏ
-                </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+      )}
 
-        {/* Loading skeletons */}
-        {loading && Array(4).fill(0).map((_, i) => (
-          <div className="col-6 col-md-3" key={`skeleton-${i}`}>
-            <ProductSkeleton />
+      {/* Empty state */}
+      {!loading && products.length === 0 && !error && (
+        <div className="card shadow-sm">
+          <div className="card-body text-center text-muted">
+            Không có sản phẩm phù hợp. Hãy điều chỉnh bộ lọc hoặc từ khóa tìm kiếm.
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Grid */}
+      {products.length > 0 && (
+        <div className="row g-3" ref={gridRef}>
+          {products.map((p, index) => (
+            <div 
+              className="col-6 col-md-3" 
+              key={p.id}
+              ref={index === products.length - 1 ? lastProductRef : null}
+            >
+              <div className="card h-100 shadow-sm product-card">
+                <Link to={`/products/${p.slug || p.id}`} className="text-decoration-none text-dark">
+                  <div className="bg-light rounded-top overflow-hidden" style={{ aspectRatio: '4 / 5' }}>
+                    {p.image && (
+                      <img src={p.image} alt={p.name} className="w-100 h-100" style={{ objectFit: 'cover', display: 'block' }} />
+                    )}
+                  </div>
+                </Link>
+                <div className="card-body d-flex flex-column">
+                  <Link to={`/products/${p.slug || p.id}`} className="text-decoration-none text-dark">
+                    <h6 className="card-title" style={{ minHeight: 40 }}>{p.name}</h6>
+                  </Link>
+                  {p.rating > 0 && (
+                    <div className="d-flex align-items-center gap-1 mb-2">
+                      <span className="badge bg-warning text-dark">
+                        {p.rating?.toFixed(1)} ⭐
+                      </span>
+                      <small className="text-muted">
+                        ({p.reviewsCount})
+                      </small>
+                    </div>
+                  )}
+                  <div className="fw-bold text-danger mb-2">{p.price?.toLocaleString('vi-VN')}₫</div>
+                  <button 
+                    className="btn btn-sm btn-primary mt-auto" 
+                    onClick={() => {
+                      addItem(p, 1);
+                      const el = document.getElementById('offcanvasCart');
+                      const bs = window.bootstrap;
+                      if (el && bs) {
+                        const inst = bs.Offcanvas.getInstance(el) || new bs.Offcanvas(el, { backdrop: true, scroll: true });
+                        inst.show();
+                      }
+                    }}
+                  >
+                    Thêm vào giỏ
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {/* Loading skeletons */}
+      {loading && products.length > 0 && Array(4).fill(0).map((_, i) => (
+        <div className="col-6 col-md-3" key={`skeleton-${i}`}>
+          <ProductSkeleton />
+        </div>
+      ))}
 
       {!loading && !hasMore && products.length > 0 && (
         <p className="text-center text-muted mt-4">Đã hiển thị tất cả sản phẩm</p>

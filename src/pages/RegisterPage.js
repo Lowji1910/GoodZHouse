@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import registerImage from '../images/image2.png';
+import gsap from 'gsap';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -19,6 +21,39 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const imgRef = useRef(null);
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    const tl = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
+    if (imgRef.current) {
+      tl.from(imgRef.current, { autoAlpha: 0, y: 24 });
+    }
+    if (cardRef.current) {
+      tl.from(cardRef.current, { autoAlpha: 0, y: 24 }, '-=0.4');
+    }
+    return () => {
+      tl.kill();
+    };
+  }, []);
+
+  const pwdStrength = useMemo(() => {
+    const p = formData.password || '';
+    let score = 0;
+    if (p.length >= 6) score++;
+    if (/[A-Z]/.test(p) && /[a-z]/.test(p)) score++;
+    if (/[0-9]/.test(p)) score++;
+    if (/[^A-Za-z0-9]/.test(p)) score++;
+    const clamped = Math.min(score, 4);
+    const percent = (clamped / 4) * 100;
+    const label = clamped <= 1 ? 'Yếu' : clamped === 2 ? 'Trung bình' : clamped === 3 ? 'Khá' : 'Mạnh';
+    const color = clamped <= 1 ? 'bg-danger' : clamped === 2 ? 'bg-warning' : clamped === 3 ? 'bg-info' : 'bg-success';
+    return { percent, label, color };
+  }, [formData.password]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,20 +105,26 @@ export default function RegisterPage() {
 
   return (
     <div className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6 col-lg-4">
-          <div className="card shadow">
+      <div className="row g-4 align-items-center">
+        <div className="col-lg-6 d-none d-lg-block">
+          <img ref={imgRef} src={registerImage} alt="Register" className="img-fluid rounded-3 shadow-sm w-100" style={{objectFit:'cover'}} />
+          <div className="mt-3 ps-1">
+            <h3 className="mb-1">Tạo tài khoản GoodzHouse</h3>
+            <p className="text-muted mb-0">Lưu sản phẩm yêu thích, theo dõi đơn và nhận ưu đãi dành riêng cho bạn.</p>
+          </div>
+        </div>
+        <div className="col-lg-5 col-xl-4 ms-lg-auto">
+          <div ref={cardRef} className="card shadow-sm border-0 rounded-3">
             <div className="card-body p-4">
-              <h2 className="text-center mb-4">Đăng ký</h2>
-              
+              <h2 className="mb-2 text-start">Đăng ký</h2>
+              <div className="text-muted mb-3">Chỉ mất một phút để bắt đầu</div>
+
               {error && (
-                <div className="alert alert-danger" role="alert">
-                  {error}
-                </div>
+                <div className="alert alert-danger" role="alert">{error}</div>
               )}
 
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
+              <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+                <div>
                   <label className="form-label">Họ tên</label>
                   <input
                     type="text"
@@ -96,47 +137,64 @@ export default function RegisterPage() {
                   />
                 </div>
 
-                <div className="mb-3">
+                <div>
                   <label className="form-label">Email</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="example@gmail.com"
-                  />
+                  <div className="input-group">
+                    <span className="input-group-text">@</span>
+                    <input
+                      type="email"
+                      className="form-control"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      placeholder="example@gmail.com"
+                    />
+                  </div>
                 </div>
 
-                <div className="mb-3">
+                <div>
                   <label className="form-label">Mật khẩu</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    minLength={6}
-                    placeholder="Mật khẩu của bạn"
-                  />
+                  <div className="input-group">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="form-control"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      minLength={6}
+                      placeholder="Mật khẩu của bạn"
+                    />
+                    <button type="button" className="btn btn-outline-secondary" onClick={() => setShowPassword(v=>!v)}>
+                      {showPassword ? 'Ẩn' : 'Hiện'}
+                    </button>
+                  </div>
+                  <div className="progress mt-2" style={{height:6}}>
+                    <div className={`progress-bar ${pwdStrength.color}`} role="progressbar" style={{width: `${pwdStrength.percent}%`}} aria-valuenow={pwdStrength.percent} aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <small className="text-muted">Độ mạnh: {pwdStrength.label}</small>
                 </div>
 
-                <div className="mb-3">
+                <div>
                   <label className="form-label">Xác nhận mật khẩu</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                    minLength={6}
-                  />
+                  <div className="input-group">
+                    <input
+                      type={showConfirm ? 'text' : 'password'}
+                      className="form-control"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      required
+                      minLength={6}
+                    />
+                    <button type="button" className="btn btn-outline-secondary" onClick={() => setShowConfirm(v=>!v)}>
+                      {showConfirm ? 'Ẩn' : 'Hiện'}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="mb-3">
+                <div>
                   <label className="form-label">Số điện thoại</label>
                   <input
                     type="tel"
@@ -145,11 +203,11 @@ export default function RegisterPage() {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="0912345678 hoặc +84912345678"
-                    pattern="^(0|\+84)([3-9][0-9]{8})$"
+                    pattern="^(0|\\+84)([3-9][0-9]{8})$"
                   />
                 </div>
 
-                <div className="mb-3">
+                <div>
                   <label className="form-label">Địa chỉ (Số nhà, đường)</label>
                   <input
                     type="text"
@@ -201,7 +259,7 @@ export default function RegisterPage() {
 
                 <button
                   type="submit"
-                  className="btn btn-primary w-100 mb-3"
+                  className="btn btn-primary w-100"
                   disabled={loading}
                 >
                   {loading ? 'Đang đăng ký...' : 'Đăng ký'}

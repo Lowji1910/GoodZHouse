@@ -1,9 +1,21 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   const year = new Date().getFullYear();
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 300);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <footer className="mt-5 pt-4 border-top bg-light">
+    <footer className="mt-5 pt-4 border-top bg-light position-relative">
       <div className="container">
-        <div className="row gy-3">
+        <div className="row gy-3 align-items-start">
           <div className="col-md-4">
             <h5>GoodzHouse</h5>
             <p className="text-muted">Nội thất hiện đại cho mọi không gian.</p>
@@ -30,12 +42,40 @@ export default function Footer() {
               </div>
             </div>
             <div className="text-md-end mt-2">
-              <small className="text-muted">© {year} GoodzHouse</small>
+              <small className="text-muted"> {year} GoodzHouse</small>
             </div>
           </div>
         </div>
+
+        {/* Secondary links row (existing routes only) */}
+        <div className="row mt-3 pt-3 border-top">
+          <div className="col d-flex flex-wrap gap-3">
+            <Link to="/about" className="text-decoration-none text-muted">Giới thiệu</Link>
+            <Link to="/contact" className="text-decoration-none text-muted">Liên hệ</Link>
+          </div>
+        </div>
       </div>
+
+      {/* Back to top button */}
+      {showTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Lên đầu trang"
+          style={{
+            position: 'fixed',
+            right: 16,
+            bottom: 16,
+            borderRadius: 999,
+            padding: '10px 12px',
+            border: '1px solid var(--line)',
+            background: 'var(--surface)',
+            boxShadow: 'var(--shadow-sm)'
+          }}
+        >
+          ↑
+        </button>
+      )}
     </footer>
   );
 }
-

@@ -1,13 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap');
+
+:root {
+  --bg: #F8F6F2;
+  --surface: #FFFFFF;
+  --text: #2E2A25;
+  --muted-text: #6F6B66;
+  --primary: #5B7F6B;
+  --primary-contrast: #FDFCFB;
+  --accent: #C6A27C;
+  --line: #E8E3DB;
+  --radius: 12px;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  color: var(--text);
+}
+
+a, .link-primary {
+  color: var(--primary);
+}
+
+.btn {
+  border-radius: var(--radius);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-contrast);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #4c6b5a;
+  border-color: #4c6b5a;
+}
+
+.btn-outline-secondary {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+  background-color: var(--surface);
+  border-color: var(--text);
+}
+
+.form-control {
+  border-radius: var(--radius);
+  border-color: var(--line);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(91, 127, 107, 0.25);
+}
+
+.form-label {
+  color: var(--muted-text);
+}
+
+.card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--surface);
+}
+
+.card.shadow-sm {
+  box-shadow: var(--shadow-md);
+}
+
+.text-muted {
+  color: var(--muted-text) !important;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+/* Product card micro-interactions */
+.product-card {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.product-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.product-card img {
+  transition: transform 0.4s ease;
+}
+.product-card:hover img {
+  transform: scale(1.03);
+}
+
+/* Navbar polish */
+.navbar {
+  background-color: var(--surface) !important;
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  min-height: 72px;
+}
+/* Transparent navbar for Home hero */
+.navbar.navbar-transparent {
+  background-color: transparent !important;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+.navbar.navbar-transparent .nav-link,
+.navbar.navbar-transparent .navbar-brand {
+  color: var(--surface);
+}
+.navbar.navbar-transparent .nav-link.active::after {
+  background: var(--surface);
+}
+.navbar.navbar-scrolled {
+  background-color: var(--surface) !important;
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+.navbar .navbar-brand {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: var(--text);
+}
+.navbar .nav-link {
+  color: var(--text);
+  padding: 0.75rem 0.75rem;
+  position: relative;
+}
+.navbar .nav-link:hover {
+  color: var(--primary);
+}
+.navbar .nav-link.active {
+  color: var(--primary);
+}
+.navbar .nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 6px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+.dropdown-menu {
+  border-radius: var(--radius);
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.dropdown-menu .mega-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  gap: 8px 16px;
+}
+@media (min-width: 992px) {
+  .dropdown-menu .mega-grid {
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+  }
+}
+.dropdown-item:hover {
+  background-color: rgba(91,127,107,0.08);
+}
+
+/* Footer polish */
+footer {
+  background-color: var(--surface) !important;
+  border-top: 1px solid var(--line) !important;
+}
+footer h5, footer h6 {
+  font-family: 'Playfair Display', serif;
+}
+footer .text-muted {
+  color: var(--muted-text) !important;
 }
