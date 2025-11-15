@@ -16,14 +16,15 @@
     "react-scripts": "5.0.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently -n FRONTEND,BACKEND -c green,blue \"set PORT=3000 && npm start\" \"npm --prefix backend run dev\""
+    "dev": "concurrently -n FRONTEND,BACKEND -c green,blue \"export PORT=3000 && npm start\" \"npm --prefix backend run dev\""
   },
   "devDependencies": {
     "concurrently": "^9.0.1"

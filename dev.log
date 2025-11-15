@@ -1,0 +1,3 @@
+
+> goodzhouse@0.1.0 dev
+> concurrently -n FRONTEND,BACKEND -c green,blue "export PORT=3000 && npm start" "npm --prefix backend run dev"

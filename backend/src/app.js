@@ -17,10 +17,18 @@ const apiRouter = require('./routes');
 const wishlistRouter = require('./routes/wishlist');
 const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
+const orderRouter = require('./routes/order');
+const paymentRouter = require('./routes/payment');
+const invoiceRouter = require('./routes/invoice');
+const settingRouter = require('./routes/setting');
 app.use('/api', apiRouter);
 app.use('/api/wishlist', wishlistRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/orders', orderRouter);
+app.use('/api/payment', paymentRouter);
+app.use('/api/invoices', invoiceRouter);
+app.use('/api/settings', settingRouter);
 
 // Optional: root message to avoid "Cannot GET /"
 app.get('/', (req, res) => {

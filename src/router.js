@@ -19,11 +19,15 @@ import Users from './pages/Admin/Users';
 import Chat from './pages/Admin/Chat';
 import Coupons from './pages/Admin/Coupons';
 import AdminNotifications from './pages/Admin/Notifications';
+import InvoiceTemplatePage from './pages/Admin/InvoiceTemplatePage';
+import HomePageSettingsPage from './pages/Admin/HomePageSettings';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PaymentPage from './pages/PaymentPage';
 import OrdersPage from './pages/OrdersPage';
+import OrderStatusPage from './pages/OrderStatusPage';
+import WishlistPage from './pages/WishlistPage';
 
 export default function AppRouter() {
   return (
@@ -36,7 +40,9 @@ export default function AppRouter() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/wishlist" element={<WishlistPage />} />
       <Route path="/orders" element={<OrdersPage />} />
+      <Route path="/orders/status/:orderNumber" element={<OrderStatusPage />} />
       <Route path="/payment/:orderId" element={<PaymentPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
@@ -57,6 +63,8 @@ export default function AppRouter() {
         <Route path="users" element={<Users />} />
         <Route path="chat" element={<Chat />} />
         <Route path="coupons" element={<Coupons />} />
+        <Route path="invoice-template" element={<InvoiceTemplatePage />} />
+        <Route path="homepage-settings" element={<HomePageSettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
 

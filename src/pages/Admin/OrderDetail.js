@@ -79,6 +79,14 @@ export default function AdminOrderDetail() {
             <option value="completed">Hoàn thành</option>
             <option value="cancelled">Đã hủy</option>
           </select>
+          <a
+            href={`${base}/api/invoices/${order._id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+          >
+            Print Invoice
+          </a>
         </div>
       </div>
 

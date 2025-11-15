@@ -36,6 +36,17 @@ export const api = {
       body: JSON.stringify({ items, paymentMethod, shipping, couponCode })
     }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
   },
+  createPaymentIntent: ({ amount, paymentMethod, orderId }) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/payment/create-intent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ amount, paymentMethod, orderId })
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  },
   getOrder: (id) => {
     const token = localStorage.getItem('token');
     return fetch(`${BASE_URL}/api/orders/${id}`, {
@@ -123,6 +134,29 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
       body: JSON.stringify({ toUserId, content })
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  },
+  getInvoiceTemplate: () => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/invoices/template`, {
+      headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  },
+  updateInvoiceTemplate: (data) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/invoices/template`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+      body: JSON.stringify(data)
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  },
+  getSetting: (key) => apiGet(`/api/settings/${key}`),
+  updateSetting: (key, data) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/settings/${key}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+      body: JSON.stringify(data)
     }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
   }
 };

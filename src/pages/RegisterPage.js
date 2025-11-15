@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import registerImage from '../images/image2.png';
+import { api } from '../services/api';
 import gsap from 'gsap';
 
 export default function RegisterPage() {
@@ -23,10 +23,23 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
   const imgRef = useRef(null);
   const cardRef = useRef(null);
 
   useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const setting = await api.getSetting('registerImageUrl');
+        if (setting.value) {
+          setImageUrl(setting.value);
+        }
+      } catch (error) {
+        // Use default image if setting not found
+      }
+    };
+    fetchImage();
+
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce) return;
     const tl = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
@@ -107,7 +120,7 @@ export default function RegisterPage() {
     <div className="container py-5">
       <div className="row g-4 align-items-center">
         <div className="col-lg-6 d-none d-lg-block">
-          <img ref={imgRef} src={registerImage} alt="Register" className="img-fluid rounded-3 shadow-sm w-100" style={{objectFit:'cover'}} />
+          <img ref={imgRef} src={imageUrl || '/images/default-register.jpg'} alt="Register" className="img-fluid rounded-3 shadow-sm w-100" style={{objectFit:'cover'}} />
           <div className="mt-3 ps-1">
             <h3 className="mb-1">Tạo tài khoản GoodzHouse</h3>
             <p className="text-muted mb-0">Lưu sản phẩm yêu thích, theo dõi đơn và nhận ưu đãi dành riêng cho bạn.</p>

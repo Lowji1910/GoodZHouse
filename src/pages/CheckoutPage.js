@@ -29,8 +29,18 @@ export default function CheckoutPage() {
     setError('');
     try {
       const payloadItems = items.map(it => ({ productId: it.id, quantity: it.quantity, price: it.price }));
-      const resp = await api.createOrder({ items: payloadItems, paymentMethod, shipping, couponCode: couponApplied?.code || undefined });
-      navigate(`/payment/${resp.id}`);
+      const order = await api.createOrder({ items: payloadItems, paymentMethod, shipping, couponCode: couponApplied?.code || undefined });
+
+      if (paymentMethod === 'cod') {
+        navigate(`/orders/status/${order.orderNumber}`); // Redirect to order status page for COD
+      } else {
+        const paymentIntent = await api.createPaymentIntent({
+          amount: couponApplied ? couponApplied.total : total,
+          paymentMethod,
+          orderId: order._id,
+        });
+        window.location.href = paymentIntent.paymentUrl; // Redirect to payment gateway
+      }
     } catch (err) {
       setError(err.message || 'Đã có lỗi xảy ra');
     } finally {

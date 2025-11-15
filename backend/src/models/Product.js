@@ -9,6 +9,7 @@ const productSchema = new mongoose.Schema(
     description: String,
     categoryIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
     price: { type: Number, required: true },
+    salePrice: { type: Number },
     compareAtPrice: Number,
     currency: { type: String, default: 'VND' },
     stock: { type: Number, default: 0 },

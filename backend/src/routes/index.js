@@ -154,6 +154,36 @@ router.get('/banners', async (req, res, next) => {
   }
 });
 
+// Get products on sale
+router.get('/products/on-sale', async (req, res, next) => {
+  try {
+    const Product = require('../models/Product');
+    const docs = await Product.find({
+      isActive: { $ne: false },
+      salePrice: { $exists: true, $ne: null },
+      $expr: { $lt: [ "$salePrice", "$price" ] }
+    })
+    .select('name price salePrice currency images slug')
+    .sort({ createdAt: -1 })
+    .limit(12)
+    .lean();
+
+    res.json({
+      items: docs.map((d) => ({
+        id: d._id,
+        name: d.name,
+        price: d.salePrice,
+        originalPrice: d.price,
+        currency: d.currency,
+        image: Array.isArray(d.images) ? d.images[0] : undefined,
+        slug: d.slug,
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // =============== Admin: Banners CRUD ===============
 router.get('/admin/banners', requireAuth, requireRole('admin'), async (req, res, next) => {
   try {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '../../context/ToastContext';
+import * as XLSX from 'xlsx';
 
 const BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
@@ -21,7 +22,6 @@ export default function AdminProducts() {
 
   const [selected, setSelected] = useState([]); // product ids
   const [showImport, setShowImport] = useState(false);
-  const [importText, setImportText] = useState('');
   const [importing, setImporting] = useState(false);
 
   const headers = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` });
@@ -150,6 +150,61 @@ export default function AdminProducts() {
 
   const isAllSelected = products.length > 0 && selected.length === products.length;
 
+  const handleExport = async () => {
+    try {
+      const url = new URL(`${BASE}/api/admin/products`);
+      url.searchParams.set('limit', '9999'); // Fetch all
+      const response = await fetch(url.toString(), { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const data = await response.json();
+
+      const worksheet = XLSX.utils.json_to_sheet(data.items);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
+      XLSX.writeFile(workbook, 'products.xlsx');
+      notify('Exported successfully!', 'success');
+    } catch (e) {
+      notify(e.message || 'Error exporting products', 'danger');
+    }
+  };
+
+  const handleImport = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setImporting(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet);
+
+        for (const product of json) {
+          const payload = {
+            name: product.name,
+            price: Number(product.price) || 0,
+            stock: Number(product.stock) || 0,
+            images: product.image ? [product.image] : [],
+            categoryIds: product.categoryId ? [product.categoryId] : [],
+            description: product.description || ''
+          };
+          await fetch(`${BASE}/api/admin/products`, { method: 'POST', headers: headers(), body: JSON.stringify(payload) });
+        }
+        setShowImport(false);
+        fetchProducts(1, q);
+        notify(`Imported ${json.length} products successfully!`, 'success');
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (e) {
+      notify(e.message || 'Error importing products', 'danger');
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <div className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -166,7 +221,8 @@ export default function AdminProducts() {
           <button className="btn btn-outline-secondary" disabled={selected.length===0} onClick={()=>bulkUpdateStock(true)}>Đặt Còn hàng</button>
           <button className="btn btn-outline-secondary" disabled={selected.length===0} onClick={()=>bulkUpdateStock(false)}>Đặt Hết hàng</button>
           <button className="btn btn-outline-danger" disabled={selected.length===0} onClick={bulkDelete}>Xóa đã chọn</button>
-          <button className="btn btn-success" onClick={()=>setShowImport(true)}>Import CSV</button>
+          <button className="btn btn-info" onClick={handleExport}>Export Excel</button>
+          <button className="btn btn-success" onClick={()=>setShowImport(true)}>Import Excel</button>
           <button className="btn btn-primary" onClick={startCreate}>Thêm sản phẩm</button>
         </div>
       </div>
@@ -307,43 +363,22 @@ export default function AdminProducts() {
         </div>
       )}
 
-      {/* Import CSV Modal */}
+      {/* Import Excel Modal */}
       {showImport && (
         <div className="modal d-block" tabIndex="-1" role="dialog" style={{ background: 'rgba(0,0,0,0.35)' }}>
           <div className="modal-dialog modal-lg" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Import CSV</h5>
-                <button type="button" className="btn-close" onClick={()=>{setShowImport(false); setImportText('');}}></button>
+                <h5 className="modal-title">Import Excel</h5>
+                <button type="button" className="btn-close" onClick={()=>{setShowImport(false);}}></button>
               </div>
               <div className="modal-body">
-                <p className="text-muted">Dán dữ liệu CSV theo cột: name,price,stock,image,categoryId,description</p>
-                <textarea className="form-control" rows={10} value={importText} onChange={(e)=>setImportText(e.target.value)} placeholder="Ví dụ:\nGhế Sofa,3500000,10,https://.../sofa.jpg,64f...,Sofa vải cao cấp"></textarea>
+                <p className="text-muted">Select an Excel file with columns: name, price, stock, image, categoryId, description</p>
+                <input type="file" className="form-control" accept=".xlsx, .xls" onChange={handleImport} disabled={importing} />
+                {importing && <p className="mt-2">Importing...</p>}
               </div>
               <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={()=>{setShowImport(false); setImportText('');}}>Hủy</button>
-                <button className="btn btn-success" disabled={importing || !importText.trim()} onClick={async ()=>{
-                  try {
-                    setImporting(true);
-                    const lines = importText.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-                    for (const line of lines) {
-                      const parts = line.split(',');
-                      const [name, price, stock, image, categoryId, ...descParts] = parts;
-                      const description = descParts.join(',').trim();
-                      const payload = {
-                        name: (name||'').trim(),
-                        price: Number(price)||0,
-                        stock: Number(stock)||0,
-                        images: image ? [image.trim()] : [],
-                        categoryIds: categoryId ? [categoryId.trim()] : [],
-                        description
-                      };
-                      await fetch(`${BASE}/api/admin/products`, { method: 'POST', headers: headers(), body: JSON.stringify(payload) });
-                    }
-                    setShowImport(false); setImportText('');
-                    fetchProducts(1, q);
-                  } catch (e) { alert(e.message); } finally { setImporting(false); }
-                }}>{importing ? 'Đang import...' : 'Import'}</button>
+                <button className="btn btn-secondary" onClick={()=>{setShowImport(false);}}>Cancel</button>
               </div>
             </div>
           </div>
