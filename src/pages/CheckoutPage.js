@@ -1,13 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function CheckoutPage() {
   const { items, total } = useCart();
   const navigate = useNavigate();
+  const auth = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileSuccess, setProfileSuccess] = useState('');
   const [shipping, setShipping] = useState({
     fullName: '',
     phone: '',
@@ -22,6 +26,59 @@ export default function CheckoutPage() {
 
   const canSubmit = useMemo(() => items.length > 0 && shipping.fullName && shipping.phone && shipping.address && shipping.city, [items.length, shipping]);
 
+  // Prefill shipping from authenticated user profile when available
+  useEffect(() => {
+    if (!auth || !auth.user) return;
+    const u = auth.user;
+    // If backend stores single address string, try split by comma to extract city
+    let address = u.address || '';
+    let city = '';
+    if (address && address.includes(',')) {
+      const parts = address.split(',').map(p => p.trim()).filter(Boolean);
+      city = parts.length > 0 ? parts[parts.length - 1] : '';
+      parts.pop();
+      address = parts.join(', ');
+    }
+    setShipping(s => ({
+      ...s,
+      fullName: u.fullName || s.fullName,
+      phone: u.phone || s.phone,
+      address: address || s.address,
+      city: city || s.city
+    }));
+  }, [auth && auth.user]);
+
+  const saveProfile = async () => {
+    if (!auth || !auth.user) {
+      setError('Bạn cần đăng nhập để lưu thông tin');
+      return;
+    }
+    setProfileSaving(true);
+    setProfileSuccess('');
+    setError('');
+    try {
+      // Compose address string to store in profile
+      const composed = [shipping.address, shipping.city].filter(Boolean).join(', ');
+      const updated = await auth.updateProfile({ fullName: shipping.fullName, phone: shipping.phone, address: composed });
+      // reflect updated values
+      let address = updated.address || '';
+      let city = '';
+      if (address && address.includes(',')) {
+        const parts = address.split(',').map(p => p.trim()).filter(Boolean);
+        city = parts.length > 0 ? parts[parts.length - 1] : '';
+        parts.pop();
+        address = parts.join(', ');
+      }
+      setShipping(s => ({ ...s, fullName: updated.fullName || s.fullName, phone: updated.phone || s.phone, address: address || s.address, city: city || s.city }));
+      setProfileSuccess('Lưu thông tin thành công');
+      setTimeout(() => setProfileSuccess(''), 3000);
+    } catch (err) {
+      setError(err.message || 'Lưu thông tin thất bại');
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit || submitting) return;
@@ -29,8 +86,19 @@ export default function CheckoutPage() {
     setError('');
     try {
       const payloadItems = items.map(it => ({ productId: it.id, quantity: it.quantity, price: it.price }));
-      const resp = await api.createOrder({ items: payloadItems, paymentMethod, shipping, couponCode: couponApplied?.code || undefined });
-      navigate(`/payment/${resp.id}`);
+      const order = await api.createOrder({ items: payloadItems, paymentMethod, shipping, couponCode: couponApplied?.code || undefined });
+
+      if (paymentMethod === 'cod') {
+        // Redirect to order detail page (customer view)
+        navigate(`/orders/${order.id}`);
+      } else {
+        const paymentIntent = await api.createPaymentIntent({
+          amount: couponApplied ? couponApplied.total : total,
+          paymentMethod,
+          orderId: order.id,
+        });
+        window.location.href = paymentIntent.paymentUrl; // Redirect to payment gateway
+      }
     } catch (err) {
       setError(err.message || 'Đã có lỗi xảy ra');
     } finally {
@@ -86,6 +154,12 @@ export default function CheckoutPage() {
                     <label className="form-label">Ghi chú (tuỳ chọn)</label>
                     <textarea className="form-control" rows={3} value={shipping.note} onChange={e=>setShipping(s=>({...s, note:e.target.value}))} />
                   </div>
+                  <div className="col-12 d-flex align-items-center gap-2">
+                    <button type="button" className="btn btn-outline-secondary" onClick={saveProfile} disabled={profileSaving}>
+                      {profileSaving ? 'Đang lưu...' : 'Lưu thông tin'}
+                    </button>
+                    {profileSuccess && <div className="text-success">{profileSuccess}</div>}
+                  </div>
                 </div>
               </div>
             </div>
@@ -115,19 +189,13 @@ export default function CheckoutPage() {
               <div className="card-body">
                 <h5 className="mb-3 text-start">Phương thức thanh toán</h5>
                 <div className="row g-2">
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label className={`w-100 btn ${paymentMethod==='cod' ? 'btn-warning' : 'btn-outline-secondary'}`}>
                       <input type="radio" className="btn-check" name="pm" checked={paymentMethod==='cod'} onChange={()=>setPaymentMethod('cod')} />
                       COD
                     </label>
                   </div>
-                  <div className="col-md-4">
-                    <label className={`w-100 btn ${paymentMethod==='momo' ? 'btn-warning' : 'btn-outline-secondary'}`}>
-                      <input type="radio" className="btn-check" name="pm" checked={paymentMethod==='momo'} onChange={()=>setPaymentMethod('momo')} />
-                      MoMo
-                    </label>
-                  </div>
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label className={`w-100 btn ${paymentMethod==='vnpay' ? 'btn-warning' : 'btn-outline-secondary'}`}>
                       <input type="radio" className="btn-check" name="pm" checked={paymentMethod==='vnpay'} onChange={()=>setPaymentMethod('vnpay')} />
                       VNPAY

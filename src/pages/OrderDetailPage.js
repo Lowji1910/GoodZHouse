@@ -34,7 +34,7 @@ export default function OrderDetailPage() {
   return (
     <div className="container py-4">
       <h3 className="mb-3">Chi tiết đơn hàng</h3>
-      <div className="mb-3">Mã đơn: <strong>{order.id}</strong></div>
+      <div className="mb-3">Mã đơn: <strong>{order.orderNumber ? `#${order.orderNumber}` : order.id}</strong></div>
       <div className="mb-3">Ngày đặt: <strong>{order.createdAt ? new Date(order.createdAt).toLocaleString('vi-VN') : '-'}</strong></div>
       <div className="mb-3">Trạng thái: <span className="badge bg-secondary">{statusLabel}</span></div>
 

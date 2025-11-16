@@ -34,7 +34,39 @@ export const api = {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       body: JSON.stringify({ items, paymentMethod, shipping, couponCode })
-    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+    }).then(async (r) => {
+      if (r.ok) return r.json();
+      // Try to parse JSON error body for a better message
+      let errText = `HTTP ${r.status}`;
+      try {
+        const body = await r.json().catch(() => null);
+        if (body) {
+          if (body.message) errText = body.message;
+          else if (body.error) errText = body.error;
+          else errText = JSON.stringify(body);
+        }
+      } catch (e) {}
+      throw new Error(errText);
+    });
+  },
+  createPaymentIntent: ({ amount, paymentMethod, orderId }) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/payment/create-intent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ amount, paymentMethod, orderId })
+    }).then(async (r) => {
+      if (r.ok) return r.json();
+      let errText = `HTTP ${r.status}`;
+      try {
+        const body = await r.json().catch(() => null);
+        if (body) errText = body.message || body.error || JSON.stringify(body);
+      } catch (e) {}
+      throw new Error(errText);
+    });
   },
   getOrder: (id) => {
     const token = localStorage.getItem('token');
@@ -123,6 +155,29 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
       body: JSON.stringify({ toUserId, content })
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  },
+  getInvoiceTemplate: () => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/invoices/template`, {
+      headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) }
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  },
+  updateInvoiceTemplate: (data) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/invoices/template`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+      body: JSON.stringify(data)
+    }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  },
+  getSetting: (key) => apiGet(`/api/settings/${key}`),
+  updateSetting: (key, data) => {
+    const token = localStorage.getItem('token');
+    return fetch(`${BASE_URL}/api/settings/${key}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+      body: JSON.stringify(data)
     }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
   }
 };

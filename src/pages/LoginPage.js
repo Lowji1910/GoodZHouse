@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import loginImage from '../images/image.png';
+import { api } from '../services/api';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
     const saved = localStorage.getItem('gh_login_email');
@@ -20,6 +21,18 @@ export default function LoginPage() {
       setEmail(saved);
       setRemember(true);
     }
+
+    const fetchImage = async () => {
+      try {
+        const setting = await api.getSetting('loginImageUrl');
+        if (setting.value) {
+          setImageUrl(setting.value);
+        }
+      } catch (error) {
+        // Use default image if setting not found
+      }
+    };
+    fetchImage();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -43,7 +56,7 @@ export default function LoginPage() {
     <div className="container py-5">
       <div className="row g-4 align-items-center">
         <div className="col-lg-6 d-none d-lg-block">
-          <img src={loginImage} alt="Login" className="img-fluid rounded-3 shadow-sm w-100" style={{objectFit:'cover'}} />
+          <img src={imageUrl || '/images/default-login.jpg'} alt="Login" className="img-fluid rounded-3 shadow-sm w-100" style={{objectFit:'cover'}} />
           <div className="mt-3 ps-1">
             <h3 className="mb-1">Không gian sống ấm áp</h3>
             <p className="text-muted mb-0">Đăng nhập để theo dõi đơn, lưu sản phẩm yêu thích và nhận ưu đãi riêng.</p>

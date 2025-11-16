@@ -31,6 +31,15 @@ export function SocketProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
+  // Expose socket for non-hook consumers (e.g., admin pages) for pragmatic realtime refresh
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.__socket = socket;
+      return () => { window.__socket = null; };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
   const value = useMemo(() => ({ socket, connected }), [socket, connected]);
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 }

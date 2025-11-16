@@ -8,6 +8,10 @@ router.get('/health', (req, res) => {
   res.json({ ok: true, scope: 'api' });
 });
 
+// Public: Get auth page images (login/register backgrounds)
+const authImageController = require('../controllers/authImageController');
+router.get('/settings/auth-images', authImageController.getAuthImages);
+
 // =============== Admin: Categories List (paginated) ===============
 router.get('/admin/categories', requireAuth, requireRole('admin'), async (req, res, next) => {
   try {
@@ -149,6 +153,36 @@ router.get('/banners', async (req, res, next) => {
     }
     res.set('Cache-Control', 'no-store, max-age=0');
     res.json(docs.map(b => ({ id: b._id, title: b.title, subtitle: b.subtitle, imageUrl: b.imageUrl, linkUrl: b.linkUrl })));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Get products on sale
+router.get('/products/on-sale', async (req, res, next) => {
+  try {
+    const Product = require('../models/Product');
+    const docs = await Product.find({
+      isActive: { $ne: false },
+      salePrice: { $exists: true, $ne: null },
+      $expr: { $lt: [ "$salePrice", "$price" ] }
+    })
+    .select('name price salePrice currency images slug')
+    .sort({ createdAt: -1 })
+    .limit(12)
+    .lean();
+
+    res.json({
+      items: docs.map((d) => ({
+        id: d._id,
+        name: d.name,
+        price: d.salePrice,
+        originalPrice: d.price,
+        currency: d.currency,
+        image: Array.isArray(d.images) ? d.images[0] : undefined,
+        slug: d.slug,
+      })),
+    });
   } catch (err) {
     next(err);
   }
@@ -778,48 +812,97 @@ router.post('/orders', requireAuth, async (req, res, next) => {
 
     const total = Math.max(0, subtotal - discount);
 
-    const order = await Order.create({
+    // Build order payload with required fields
+
+    // Map shipping (from client) into structured shippingAddress
+    const street = String(shipping.address || '').trim();
+    const city = String(shipping.city || '').trim();
+    let postalCode = String(shipping.postalCode || '').trim();
+    const country = String(shipping.country || 'VN').trim();
+    // Provide sensible default postal code when not supplied to satisfy schema
+    if (!postalCode) postalCode = '000000';
+
+    const customer = await User.findById(req.user.id).select('email fullName phone').lean().catch(()=>null);
+
+    const orderPayload = {
       userId: req.user.id,
+      customerInfo: {
+        name: (shipping.fullName || customer?.fullName || '').toString(),
+        email: (customer?.email || `user_${req.user.id}@local`) .toString(),
+        phone: (shipping.phone || customer?.phone || '').toString(),
+      },
+      shippingAddress: {
+        street: street || '',
+        city: city || '',
+        postalCode: postalCode,
+        country: country || 'VN',
+      },
       items: normalizedItems,
       total,
       discount,
       couponCode: appliedCode,
-      status: paymentMethod === 'cod' ? 'pending' : 'pending',
-    });
-
-    // Placeholder payment data; to be replaced when integrating MoMo/VNPay
-    const payment = {
-      method: paymentMethod,
-      amount: total,
-      url: null,
+      status: 'pending',
+      payment: {
+        method: paymentMethod,
+        status: paymentMethod === 'cod' ? 'unpaid' : 'unpaid',
+        amount: total,
+      }
     };
 
-    // Create notifications and emit
-    try {
-      // For customer
-      const nUser = await Notification.create({
-        userId: order.userId,
-        type: 'order_created',
-        title: 'Đơn hàng đã được tạo',
-        message: `Mã đơn ${order._id} tổng ${total.toLocaleString('vi-VN')}₫`,
-        orderId: order._id,
-      });
-      // For admin
-      const nAdmin = await Notification.create({
-        userId: null,
-        type: 'admin_new_order',
-        title: 'Đơn hàng mới',
-        message: `Đơn ${order._id} từ người dùng ${order.userId}`,
-        orderId: order._id,
-      });
-      // Emit realtime
-      const io = getIO();
-      io.to(`user:${order.userId}`).emit('order:created', { orderId: order._id, total: order.total, createdAt: order.createdAt });
-      io.to(`user:${order.userId}`).emit('notifications:new', { id: nUser._id, type: nUser.type, title: nUser.title, message: nUser.message, orderId: nUser.orderId, createdAt: nUser.createdAt });
-      io.to('admin').emit('notifications:new', { id: nAdmin._id, type: nAdmin.type, title: nAdmin.title, message: nAdmin.message, orderId: nAdmin.orderId, createdAt: nAdmin.createdAt });
-    } catch {}
+    // Ensure orderNumber exists by generating an ObjectId first
+    const mongoose = require('mongoose');
+    const genId = new mongoose.Types.ObjectId();
+    orderPayload._id = genId;
+    orderPayload.orderNumber = genId.toString();
 
-    res.status(201).json({ id: order._id, status: order.status, total: order.total, discount: order.discount, couponCode: order.couponCode, payment });
+    const order = await Order.create(orderPayload);
+
+    // Respond to client immediately (include orderNumber)
+    res.status(201).json({ id: order._id, orderNumber: order.orderNumber || String(order._id), status: order.status, total: order.total, discount: order.discount, couponCode: order.couponCode, payment: order.payment || { method: paymentMethod, amount: total } });
+
+    // Fire-and-forget: send notifications, realtime emits and email in background
+    (async () => {
+      try {
+        // Create notifications
+        const nUser = await Notification.create({
+          userId: order.userId,
+          type: 'order_created',
+          title: 'Đơn hàng đã được tạo',
+          message: `Mã đơn ${order._id} tổng ${total.toLocaleString('vi-VN')}₫`,
+          orderId: order._id,
+        });
+        const nAdmin = await Notification.create({
+          userId: null,
+          type: 'admin_new_order',
+          title: 'Đơn hàng mới',
+          message: `Đơn ${order._id} từ người dùng ${order.userId}`,
+          orderId: order._id,
+        });
+
+        // Emit realtime events (safe-guarded)
+        try {
+          const io = getIO();
+          if (io) {
+            io.to(`user:${order.userId}`).emit('order:created', { orderId: order._id, total: order.total, createdAt: order.createdAt });
+            io.to(`user:${order.userId}`).emit('notifications:new', { id: nUser._id, type: nUser.type, title: nUser.title, message: nUser.message, orderId: nUser.orderId, createdAt: nUser.createdAt });
+            io.to('admin').emit('notifications:new', { id: nAdmin._id, type: nAdmin.type, title: nAdmin.title, message: nAdmin.message, orderId: nAdmin.orderId, createdAt: nAdmin.createdAt });
+          }
+        } catch (e) {
+          console.error('Realtime emit failed:', e.message || e);
+        }
+
+        // Send confirmation email (do not let failures affect response)
+        try {
+          const { sendOrderConfirmationEmail } = require('../utils/emailService');
+          // call but catch errors
+          await sendOrderConfirmationEmail(order).catch(err => console.error('Send email failed:', err && err.message ? err.message : err));
+        } catch (e) {
+          console.error('Email service error:', e && e.message ? e.message : e);
+        }
+      } catch (bgErr) {
+        console.error('Background order post-processing failed:', bgErr && bgErr.message ? bgErr.message : bgErr);
+      }
+    })();
   } catch (err) {
     next(err);
   }

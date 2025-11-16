@@ -16,7 +16,10 @@ function ProductRow({ title, query }) {
     const load = async () => {
       try {
         setLoading(true); setError('');
-        const res = await fetch(`${BASE}/api/products?${query}&_=${Date.now()}`, {
+        const url = query === 'on-sale'
+          ? `${BASE}/api/products/on-sale`
+          : `${BASE}/api/products?${query}&_=${Date.now()}`;
+        const res = await fetch(url, {
           signal: controller.signal,
           cache: 'no-store',
           headers: { 'Cache-Control': 'no-cache' }
@@ -83,7 +86,8 @@ function ProductRow({ title, query }) {
 
 export default function HomePage() {
   const [banners, setBanners] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingBanners, setLoadingBanners] = useState(true);
+  const [homeCategories, setHomeCategories] = useState([]);
   const [error, setError] = useState('');
   const abortRef = useRef(null);
 
@@ -91,25 +95,34 @@ export default function HomePage() {
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
+
     const load = async () => {
       try {
-        setLoading(true); setError('');
-        const res = await fetch(`${BASE}/api/banners?_=${Date.now()}`, {
-          signal: controller.signal,
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        });
-        if (!(res.ok || res.status === 304)) throw new Error('HTTP ' + res.status);
-        if (res.status !== 304) {
-          const data = await res.json();
-          if (!controller.signal.aborted) setBanners(data || []);
+        setLoadingBanners(true);
+        setError('');
+        const [bannersRes, settingsRes, categoriesRes] = await Promise.all([
+          fetch(`${BASE}/api/banners?_=${Date.now()}`, { signal: controller.signal, cache: 'no-store' }),
+          fetch(`${BASE}/api/settings/homepageCategories`, { signal: controller.signal, cache: 'no-store' }),
+          fetch(`${BASE}/api/categories`, { signal: controller.signal, cache: 'no-store' })
+        ]);
+
+        if (!bannersRes.ok) throw new Error('Failed to fetch banners');
+        setBanners(await bannersRes.json());
+
+        if (settingsRes.ok && categoriesRes.ok) {
+          const settings = await settingsRes.json();
+          const allCategories = await categoriesRes.json();
+          const selectedCats = allCategories.filter(cat => settings.categoryIds.includes(cat._id));
+          setHomeCategories(selectedCats);
         }
+
       } catch (e) {
         if (e.name !== 'AbortError') setError(e.message);
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) setLoadingBanners(false);
       }
     };
+
     load();
     return () => controller.abort();
   }, []);
@@ -119,10 +132,8 @@ export default function HomePage() {
       {/* Carousel banners */}
       <div id="homeCarousel" className="carousel slide mb-4" data-bs-ride="carousel">
         <div className="carousel-inner rounded shadow-sm">
-          {(loading && banners.length === 0) ? (
-            <div className="carousel-item active">
-              <div className="ratio ratio-16x9 bg-light" />
-            </div>
+          {loadingBanners ? (
+            <div className="carousel-item active"><div className="ratio ratio-16x9 bg-light" /></div>
           ) : banners.length === 0 ? (
             <div className="carousel-item active">
               <div className="ratio ratio-16x9 bg-light d-flex align-items-center justify-content-center">
@@ -131,43 +142,22 @@ export default function HomePage() {
             </div>
           ) : (
             banners.map((b, idx) => (
-              <div key={b.id} className={`carousel-item ${idx===0? 'active':''}`}>
-                {b.linkUrl ? (
-                  <a href={b.linkUrl}>
-                    <img src={b.imageUrl} className="d-block w-100" alt={b.title || ''} style={{ height: '360px', objectFit: 'cover' }} />
-                  </a>
-                ) : (
-                  <img src={b.imageUrl} className="d-block w-100" alt={b.title || ''} style={{ height: '360px', objectFit: 'cover' }} />
-                )}
-                {(b.title || b.subtitle) && (
-                  <div className="carousel-caption d-none d-md-block text-start">
-                    {b.title && <h5 className="fw-bold">{b.title}</h5>}
-                    {b.subtitle && <p>{b.subtitle}</p>}
-                  </div>
-                )}
+              <div key={b.id} className={`carousel-item ${idx === 0 ? 'active' : ''}`}>
+                <a href={b.linkUrl || '#'}><img src={b.imageUrl} className="d-block w-100" alt={b.title || ''} style={{ height: '360px', objectFit: 'cover' }} /></a>
               </div>
             ))
           )}
         </div>
-        {banners.length > 1 && (
-          <>
-            <button className="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
-              <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span className="visually-hidden">Previous</span>
-            </button>
-            <button className="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
-              <span className="carousel-control-next-icon" aria-hidden="true"></span>
-              <span className="visually-hidden">Next</span>
-            </button>
-          </>
-        )}
       </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
       {/* Horizontal product sections */}
       <ProductRow title="Hàng mới" query="limit=12" />
-      <ProductRow title="Giá tốt hôm nay" query="sort=price_asc&limit=12" />
+      <ProductRow title="Sản phẩm Giảm giá" query="on-sale" />
+      {homeCategories.map(cat => (
+        <ProductRow key={cat._id} title={cat.name} query={`category=${cat._id}&limit=12`} />
+      ))}
     </div>
   );
 }
