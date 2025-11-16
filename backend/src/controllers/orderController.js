@@ -1,7 +1,7 @@
 const Order = require('../models/Order');
-const { customAlphabet } = require('nanoid');
+// nanoid not used any more; using MongoDB _id as canonical orderNumber
 const { sendOrderConfirmationEmail } = require('../utils/emailService');
-const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 10);
+// (previously used nanoid to create orderNumber)
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -18,8 +18,12 @@ const createOrder = async (req, res) => {
       payment,
     } = req.body;
 
+    const mongoose = require('mongoose');
+    // Generate an ObjectId up-front and use it as canonical orderNumber
+    const generatedId = new mongoose.Types.ObjectId();
     const order = new Order({
-      orderNumber: nanoid(),
+      _id: generatedId,
+      orderNumber: generatedId.toString(),
       userId: req.user.id,
       customerInfo,
       shippingAddress,
@@ -32,7 +36,7 @@ const createOrder = async (req, res) => {
 
     const createdOrder = await order.save();
 
-    // Send order confirmation email
+    // Send order confirmation email (uses createdOrder.orderNumber)
     await sendOrderConfirmationEmail(createdOrder);
 
     res.status(201).json(createdOrder);

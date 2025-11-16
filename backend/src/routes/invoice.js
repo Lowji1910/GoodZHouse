@@ -1,16 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const invoiceController = require('../controllers/invoiceController');
-const authMiddleware = require('../middleware/auth');
-const adminMiddleware = require('../middleware/admin'); // Assuming you have an admin middleware
+const { requireAuth, requireRole } = require('../middleware/auth');
 
-// GET /api/invoices/template - Get the invoice template
-router.get('/template', authMiddleware, adminMiddleware, invoiceController.getInvoiceTemplate);
+// Get invoice template (Admin only)
+// GET /api/invoices/template
+router.get('/template', requireAuth, requireRole('admin'), invoiceController.getInvoiceTemplate);
 
-// PUT /api/invoices/template - Update the invoice template
-router.put('/template', authMiddleware, adminMiddleware, invoiceController.updateInvoiceTemplate);
+// Save invoice template (Admin only)
+// POST /api/invoices/template
+router.post('/template', requireAuth, requireRole('admin'), invoiceController.saveInvoiceTemplate);
 
-// GET /api/invoices/:orderId - Generate a PDF invoice for an order
-router.get('/:orderId', authMiddleware, adminMiddleware, invoiceController.generateInvoicePDF);
+// Generate invoice PDF (Admin or order owner)
+// GET /api/invoices/:orderId/print
+router.get('/:orderId/print', requireAuth, invoiceController.generateInvoicePDF);
+
+// Preview invoice in HTML (Admin or order owner)
+// GET /api/invoices/:orderId/preview
+router.get('/:orderId/preview', requireAuth, invoiceController.previewInvoice);
 
 module.exports = router;

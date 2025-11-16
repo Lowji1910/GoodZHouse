@@ -374,4 +374,44 @@ router.get('/order-history', async (req, res, next) => {
   }
 });
 
+// =============== Excel Import/Export ===============
+const excelController = require('../controllers/excelController');
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Export products to Excel
+// GET /api/admin/products/export
+router.get('/products/export', excelController.exportProducts);
+
+// Export orders to Excel
+// GET /api/admin/orders/export
+router.get('/orders/export', excelController.exportOrders);
+
+// Get product import template
+// GET /api/admin/products/import-template
+router.get('/products/import-template', excelController.getImportTemplate);
+
+// Import products from Excel
+// POST /api/admin/products/import
+router.post('/products/import', upload.single('file'), excelController.importProducts);
+
+// =============== Auth Page Images ===============
+const authImageController = require('../controllers/authImageController');
+
+// Upload login page background
+// POST /api/admin/settings/auth-images/login
+router.post('/settings/auth-images/login', upload.single('image'), authImageController.uploadLoginImage);
+
+// Upload register page background
+// POST /api/admin/settings/auth-images/register
+router.post('/settings/auth-images/register', upload.single('image'), authImageController.uploadRegisterImage);
+
+// Delete login image
+// DELETE /api/admin/settings/auth-images/login
+router.delete('/settings/auth-images/login', authImageController.deleteLoginImage);
+
+// Delete register image
+// DELETE /api/admin/settings/auth-images/register
+router.delete('/settings/auth-images/register', authImageController.deleteRegisterImage);
+
 module.exports = router;

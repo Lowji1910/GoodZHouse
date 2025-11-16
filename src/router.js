@@ -27,6 +27,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import PaymentPage from './pages/PaymentPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderStatusPage from './pages/OrderStatusPage';
+import OrderDetailPage from './pages/OrderDetailPage';
 import WishlistPage from './pages/WishlistPage';
 
 export default function AppRouter() {
@@ -43,6 +44,7 @@ export default function AppRouter() {
       <Route path="/wishlist" element={<WishlistPage />} />
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/orders/status/:orderNumber" element={<OrderStatusPage />} />
+      <Route path="/orders/:orderId" element={<OrderDetailPage />} />
       <Route path="/payment/:orderId" element={<PaymentPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
