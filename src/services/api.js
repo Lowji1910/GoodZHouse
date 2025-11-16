@@ -1,7 +1,12 @@
-const BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 
 export async function apiGet(path, params) {
-  const url = new URL(`${BASE_URL}${path}`);
+  let url;
+  if (BASE_URL) {
+    url = new URL(`${BASE_URL}${path}`);
+  } else {
+    url = new URL(path, window.location.origin);
+  }
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
       if (v !== undefined && v !== null && v !== '') url.searchParams.set(k, v);

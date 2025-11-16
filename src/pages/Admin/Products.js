@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '../../context/ToastContext';
-import * as XLSX from 'xlsx';
-
-const BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 export default function AdminProducts() {
   const { notify } = useToast();
@@ -35,12 +32,12 @@ export default function AdminProducts() {
   const fetchProducts = async (p = 1, query = '') => {
     try {
       setLoading(true); setError('');
-      const url = new URL(`${BASE}/api/admin/products`);
-      url.searchParams.set('limit', '8');
-      url.searchParams.set('page', String(p));
-      if (query) url.searchParams.set('q', query);
-      if (catFilter) url.searchParams.set('categoryId', catFilter);
-      const response = await fetch(url.toString(), { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+      const params = new URLSearchParams();
+      params.set('limit', '8');
+      params.set('page', String(p));
+      if (query) params.set('q', query);
+      if (catFilter) params.set('categoryId', catFilter);
+      const response = await fetch(`/api/admin/products?${params.toString()}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
       if (!response.ok) throw new Error('HTTP ' + response.status);
       const data = await response.json();
       setProducts(data.items || []);
@@ -56,7 +53,7 @@ export default function AdminProducts() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${BASE}/api/categories`);
+      const res = await fetch(`/api/categories`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       setCategories(data);
@@ -76,7 +73,7 @@ export default function AdminProducts() {
   const bulkUpdateStock = async (inStock) => {
     if (selected.length === 0) return;
     try {
-      await Promise.all(selected.map(id => fetch(`${BASE}/api/admin/products/${id}`, { method: 'PATCH', headers: headers(), body: JSON.stringify({ inStock }) })));
+      await Promise.all(selected.map(id => fetch(`/api/admin/products/${id}`, { method: 'PATCH', headers: headers(), body: JSON.stringify({ inStock }) })));
       setSelected([]);
       fetchProducts(page, q);
       notify(`Đã đặt ${inStock ? 'Còn hàng' : 'Hết hàng'} cho ${selected.length} sản phẩm`, 'success');
@@ -87,7 +84,7 @@ export default function AdminProducts() {
     if (selected.length === 0) return;
     if (!window.confirm(`Xóa ${selected.length} sản phẩm đã chọn?`)) return;
     try {
-      await Promise.all(selected.map(id => fetch(`${BASE}/api/admin/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })));
+      await Promise.all(selected.map(id => fetch(`/api/admin/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })));
       setSelected([]);
       fetchProducts(page, q);
       notify('Đã xóa các sản phẩm đã chọn', 'success');
@@ -96,7 +93,7 @@ export default function AdminProducts() {
 
   const handleDownloadTemplate = async () => {
     try {
-      const response = await fetch(`${BASE}/api/admin/products/import-template`, {
+      const response = await fetch(`/api/admin/products/import-template`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -152,7 +149,7 @@ export default function AdminProducts() {
         description: form.description || ''
       };
       const method = editingId ? 'PATCH' : 'POST';
-      const url = editingId ? `${BASE}/api/admin/products/${editingId}` : `${BASE}/api/admin/products`;
+      const url = editingId ? `/api/admin/products/${editingId}` : `/api/admin/products`;
       const res = await fetch(url, { method, headers: headers(), body: JSON.stringify(payload) });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       setShowForm(false); setEditingId(null);
@@ -164,7 +161,7 @@ export default function AdminProducts() {
   const remove = async (id) => {
     if (!window.confirm('Xóa sản phẩm này?')) return;
     try {
-      const res = await fetch(`${BASE}/api/admin/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+      const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
       if (!(res.ok || res.status === 204)) throw new Error('HTTP ' + res.status);
       fetchProducts(page, q);
       notify('Đã xóa sản phẩm', 'success');
@@ -175,7 +172,7 @@ export default function AdminProducts() {
 
   const handleExport = async () => {
     try {
-      const response = await fetch(`${BASE}/api/admin/products/export`, {
+      const response = await fetch(`/api/admin/products/export`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -205,7 +202,7 @@ export default function AdminProducts() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(`${BASE}/api/admin/products/import`, {
+      const response = await fetch(`/api/admin/products/import`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
