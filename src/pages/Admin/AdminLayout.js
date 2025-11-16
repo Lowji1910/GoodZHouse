@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { useSocket } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
+import NotificationBell from '../../components/Notifications/NotificationBell';
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -90,6 +91,7 @@ export default function AdminLayout() {
                 </nav>
               </div>
               <div className="d-flex align-items-center gap-2">
+                <NotificationBell />
                 <input className="form-control form-control-sm" placeholder="Tìm kiếm..." style={{ maxWidth: 220 }} />
               </div>
             </div>

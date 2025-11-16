@@ -94,6 +94,29 @@ export default function AdminProducts() {
     } catch (e) { notify(e.message || 'Lỗi khi xóa sản phẩm', 'danger'); }
   };
 
+  const handleDownloadTemplate = async () => {
+    try {
+      const response = await fetch(`${BASE}/api/admin/products/import-template`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'products-template.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      notify('Tải template thành công!', 'success');
+    } catch (e) {
+      notify(e.message || 'Lỗi khi tải template', 'danger');
+    }
+  };
+
   const startCreate = () => {
     setEditingId(null);
     setForm({ name: '', slug: '', price: '', stock: '', image: '', categoryId: '', description: '' });
@@ -152,19 +175,24 @@ export default function AdminProducts() {
 
   const handleExport = async () => {
     try {
-      const url = new URL(`${BASE}/api/admin/products`);
-      url.searchParams.set('limit', '9999'); // Fetch all
-      const response = await fetch(url.toString(), { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+      const response = await fetch(`${BASE}/api/admin/products/export`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
       if (!response.ok) throw new Error('HTTP ' + response.status);
-      const data = await response.json();
-
-      const worksheet = XLSX.utils.json_to_sheet(data.items);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
-      XLSX.writeFile(workbook, 'products.xlsx');
-      notify('Exported successfully!', 'success');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'products.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      notify('Xuất file Excel thành công!', 'success');
     } catch (e) {
-      notify(e.message || 'Error exporting products', 'danger');
+      notify(e.message || 'Lỗi khi xuất file Excel', 'danger');
     }
   };
 
@@ -174,34 +202,35 @@ export default function AdminProducts() {
 
     setImporting(true);
     try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet);
+      const formData = new FormData();
+      formData.append('file', file);
 
-        for (const product of json) {
-          const payload = {
-            name: product.name,
-            price: Number(product.price) || 0,
-            stock: Number(product.stock) || 0,
-            images: product.image ? [product.image] : [],
-            categoryIds: product.categoryId ? [product.categoryId] : [],
-            description: product.description || ''
-          };
-          await fetch(`${BASE}/api/admin/products`, { method: 'POST', headers: headers(), body: JSON.stringify(payload) });
-        }
+      const response = await fetch(`${BASE}/api/admin/products/import`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const result = await response.json();
+
+      if (result.success) {
         setShowImport(false);
         fetchProducts(1, q);
-        notify(`Imported ${json.length} products successfully!`, 'success');
-      };
-      reader.readAsArrayBuffer(file);
+        notify(`Nhập thành công ${result.productsImported} sản phẩm!`, 'success');
+      } else {
+        notify(result.message || 'Lỗi khi nhập file Excel', 'danger');
+        if (result.errors && result.errors.length > 0) {
+          console.error('Import errors:', result.errors);
+        }
+      }
     } catch (e) {
-      notify(e.message || 'Error importing products', 'danger');
+      notify(e.message || 'Lỗi khi nhập file Excel', 'danger');
     } finally {
       setImporting(false);
+      event.target.value = '';
     }
   };
 
@@ -373,12 +402,34 @@ export default function AdminProducts() {
                 <button type="button" className="btn-close" onClick={()=>{setShowImport(false);}}></button>
               </div>
               <div className="modal-body">
-                <p className="text-muted">Select an Excel file with columns: name, price, stock, image, categoryId, description</p>
-                <input type="file" className="form-control" accept=".xlsx, .xls" onChange={handleImport} disabled={importing} />
-                {importing && <p className="mt-2">Importing...</p>}
+                <div className="alert alert-info">
+                  <strong>Hướng dẫn:</strong>
+                  <ol className="mb-0 mt-2">
+                    <li>Tải file template mẫu bên dưới</li>
+                    <li>Điền thông tin sản phẩm vào file Excel</li>
+                    <li>Upload file để nhập dữ liệu</li>
+                  </ol>
+                </div>
+                <div className="mb-3">
+                  <button className="btn btn-outline-primary" onClick={handleDownloadTemplate}>
+                    📥 Tải Template Mẫu
+                  </button>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Chọn file Excel để import</label>
+                  <input type="file" className="form-control" accept=".xlsx, .xls" onChange={handleImport} disabled={importing} />
+                </div>
+                {importing && (
+                  <div className="text-center">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Đang nhập...</span>
+                    </div>
+                    <p className="mt-2">Đang xử lý file Excel...</p>
+                  </div>
+                )}
               </div>
               <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={()=>{setShowImport(false);}}>Cancel</button>
+                <button className="btn btn-secondary" onClick={()=>{setShowImport(false);}} disabled={importing}>Đóng</button>
               </div>
             </div>
           </div>
